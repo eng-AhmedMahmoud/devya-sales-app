@@ -12,7 +12,13 @@ export const dynamic = 'force-dynamic';
 export default async function LeadsListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ stage?: LeadStage; source?: LeadSource; budget?: BudgetBucket; q?: string }>;
+  searchParams: Promise<{
+    stage?: LeadStage;
+    source?: LeadSource;
+    budget?: BudgetBucket;
+    q?: string;
+    page?: string;
+  }>;
 }) {
   const cookieHeader = (await headers()).get('cookie') ?? '';
   try {
@@ -22,17 +28,34 @@ export default async function LeadsListPage({
     throw err;
   }
   const sp = await searchParams;
-  const leads = await api.leads.list(sp, cookieHeader);
+  const page = Math.max(1, Number(sp.page) || 1);
+  const { items: leads, total, pageSize } = await api.leads.list(
+    { stage: sp.stage, source: sp.source, budget: sp.budget, q: sp.q, page },
+    cookieHeader,
+  );
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+
+  // Preserve active filters when moving between pages.
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams();
+    if (sp.q) params.set('q', sp.q);
+    if (sp.stage) params.set('stage', sp.stage);
+    if (sp.source) params.set('source', sp.source);
+    if (sp.budget) params.set('budget', sp.budget);
+    if (p > 1) params.set('page', String(p));
+    const s = params.toString();
+    return s ? `/leads?${s}` : '/leads';
+  };
 
   return (
     <Shell>
       <PageHeader
         title="قائمة العملاء"
-        subtitle={`${leads.length} عميل`}
+        subtitle={`${total} عميل`}
         actions={
           <div className="flex items-center gap-2">
             <a
-              href={api.exportUrl(sp)}
+              href={api.exportUrl({ stage: sp.stage, source: sp.source, budget: sp.budget, q: sp.q })}
               className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-ink-200 hover:bg-white/5"
             >
               <Download className="h-3.5 w-3.5" />
@@ -147,6 +170,40 @@ export default async function LeadsListPage({
           </tbody>
         </table>
       </div>
+
+      {pageCount > 1 && (
+        <div className="mt-4 flex items-center justify-between gap-2 text-sm">
+          {page > 1 ? (
+            <Link
+              href={pageHref(page - 1)}
+              className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-ink-200 hover:bg-white/5"
+            >
+              السابق
+            </Link>
+          ) : (
+            <span className="inline-flex items-center rounded-md border border-white/5 px-3 py-1.5 text-ink-600">
+              السابق
+            </span>
+          )}
+
+          <span className="text-ink-400">
+            صفحة {page} من {pageCount}
+          </span>
+
+          {page < pageCount ? (
+            <Link
+              href={pageHref(page + 1)}
+              className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-ink-200 hover:bg-white/5"
+            >
+              التالي
+            </Link>
+          ) : (
+            <span className="inline-flex items-center rounded-md border border-white/5 px-3 py-1.5 text-ink-600">
+              التالي
+            </span>
+          )}
+        </div>
+      )}
     </Shell>
   );
 }

@@ -82,11 +82,20 @@ export interface ListLeadsParams {
   q?: string;
   from?: string;
   to?: string;
+  page?: number;
+  pageSize?: number;
 }
 
-function qs(params: Record<string, string | undefined>): string {
+export interface Paginated<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+function qs(params: Record<string, string | number | undefined>): string {
   const q = new URLSearchParams();
-  for (const [k, v] of Object.entries(params)) if (v) q.set(k, v);
+  for (const [k, v] of Object.entries(params)) if (v) q.set(k, String(v));
   const s = q.toString();
   return s ? `?${s}` : '';
 }
@@ -106,7 +115,7 @@ export const api = {
 
   leads: {
     list: (params: ListLeadsParams = {}, cookieHeader?: string) =>
-      apiFetch<Lead[]>(`/api/admin/sales/leads${qs(params as Record<string, string | undefined>)}`, { cookieHeader }),
+      apiFetch<Paginated<Lead>>(`/api/admin/sales/leads${qs(params as Record<string, string | number | undefined>)}`, { cookieHeader }),
     get: (id: string, cookieHeader?: string) =>
       apiFetch<Lead>(`/api/admin/sales/leads/${id}`, { cookieHeader }),
     create: (body: CreateLeadPayload) =>
@@ -202,7 +211,7 @@ export const api = {
   },
 
   exportUrl: (params: ListLeadsParams = {}) =>
-    `${appConfig.apiUrl}/api/admin/sales/export${qs(params as Record<string, string | undefined>)}`,
+    `${appConfig.apiUrl}/api/admin/sales/export${qs(params as Record<string, string | number | undefined>)}`,
 };
 
 export const STAGE_LABELS_AR: Record<LeadStage, string> = {

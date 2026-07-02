@@ -20,7 +20,7 @@ export default async function PipelinePage() {
     }
     throw err;
   }
-  const leads = await api.leads.list({}, cookieHeader);
+  const { items: leads } = await api.leads.list({ pageSize: 200 }, cookieHeader);
 
   return (
     <Shell>

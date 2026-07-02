@@ -15,7 +15,7 @@ export default async function HistoryPage() {
     if (err instanceof ApiError && (err.status === 401 || err.status === 403)) redirect('/login');
     throw err;
   }
-  const leads = await api.leads.list({}, cookieHeader);
+  const { items: leads } = await api.leads.list({ pageSize: 200 }, cookieHeader);
   const closed = leads.filter((l) => l.outcome !== 'OPEN');
 
   return (
