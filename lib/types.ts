@@ -58,6 +58,7 @@ export interface AuthUser {
   email: string;
   name?: string | null;
   role: UserRole;
+  mustChangePassword?: boolean;
 }
 
 export interface LeadActivity {
