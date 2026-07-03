@@ -10,8 +10,9 @@ export const dynamic = 'force-dynamic';
 export default async function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const cookieHeader = (await headers()).get('cookie') ?? '';
+  let user;
   try {
-    await api.me(cookieHeader);
+    ({ user } = await api.me(cookieHeader));
   } catch (err) {
     if (err instanceof ApiError && (err.status === 401 || err.status === 403)) redirect('/login');
     throw err;
@@ -33,7 +34,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   return (
     <Shell>
       <PageHeader title={lead.clientName} subtitle={`${lead.code} · ${lead.companyName ?? ''}`} />
-      <LeadDetailClient lead={lead} />
+      <LeadDetailClient lead={lead} user={user} />
     </Shell>
   );
 }

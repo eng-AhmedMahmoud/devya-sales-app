@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Download, Plus } from 'lucide-react';
 import { Shell } from '@/components/ui/shell';
 import { PageHeader } from '@/components/ui/page-header';
+import { LeadsListClient } from '@/components/lead/leads-list-client';
 import { api, ApiError, BUDGET_LABELS_AR, SOURCE_LABELS_AR, STAGE_LABELS_AR } from '@/lib/api';
 import type { LeadStage, LeadSource, BudgetBucket } from '@/lib/types';
 
@@ -21,18 +22,22 @@ export default async function LeadsListPage({
   }>;
 }) {
   const cookieHeader = (await headers()).get('cookie') ?? '';
+  let user;
   try {
-    await api.me(cookieHeader);
+    ({ user } = await api.me(cookieHeader));
   } catch (err) {
     if (err instanceof ApiError && (err.status === 401 || err.status === 403)) redirect('/login');
     throw err;
   }
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page) || 1);
-  const { items: leads, total, pageSize } = await api.leads.list(
-    { stage: sp.stage, source: sp.source, budget: sp.budget, q: sp.q, page },
-    cookieHeader,
-  );
+  const [{ items: leads, total, pageSize }, team] = await Promise.all([
+    api.leads.list(
+      { stage: sp.stage, source: sp.source, budget: sp.budget, q: sp.q, page },
+      cookieHeader,
+    ),
+    api.team(cookieHeader).catch(() => []),
+  ]);
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
   // Preserve active filters when moving between pages.
@@ -129,47 +134,12 @@ export default async function LeadsListPage({
         </button>
       </form>
 
-      <div className="surface-strong overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
-            <tr>
-              <th className="text-start px-4 py-3">الكود</th>
-              <th className="text-start px-4 py-3">العميل</th>
-              <th className="text-start px-4 py-3">الشركة</th>
-              <th className="text-start px-4 py-3">الهاتف</th>
-              <th className="text-start px-4 py-3">المصدر</th>
-              <th className="text-start px-4 py-3">الميزانية</th>
-              <th className="text-start px-4 py-3">المرحلة</th>
-              <th className="text-start px-4 py-3">المندوب</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leads.map((l) => (
-              <tr key={l.id} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
-                <td className="px-4 py-3">
-                  <Link href={`/leads/${l.id}`} className="ltr-inline text-emerald-300 hover:text-white">
-                    {l.code}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-white">{l.clientName}</td>
-                <td className="px-4 py-3 text-ink-300">{l.companyName ?? '—'}</td>
-                <td className="px-4 py-3 text-ink-300 ltr-inline">{l.phone ?? '—'}</td>
-                <td className="px-4 py-3 text-ink-300">{SOURCE_LABELS_AR[l.source]}</td>
-                <td className="px-4 py-3 text-ink-300">{BUDGET_LABELS_AR[l.budget]}</td>
-                <td className="px-4 py-3 text-ink-300">{STAGE_LABELS_AR[l.stage]}</td>
-                <td className="px-4 py-3 text-ink-300">{l.assignedRepName ?? '—'}</td>
-              </tr>
-            ))}
-            {leads.length === 0 && (
-              <tr>
-                <td colSpan={8} className="text-center text-ink-500 py-10">
-                  لا توجد نتائج
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* Client component handles bulk mode + WhatsApp buttons */}
+      <LeadsListClient
+        leads={leads}
+        user={user}
+        team={team}
+      />
 
       {pageCount > 1 && (
         <div className="mt-4 flex items-center justify-between gap-2 text-sm">

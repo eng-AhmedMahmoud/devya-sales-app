@@ -6,11 +6,13 @@ import {
   ArrowRight,
   Calendar,
   CheckCircle2,
+  ExternalLink,
   Loader2,
   MessageSquare,
   Phone,
   ThumbsDown,
   Trophy,
+  UserPlus,
 } from 'lucide-react';
 import {
   ACTIVITY_LABELS_AR,
@@ -21,8 +23,9 @@ import {
   ApiError,
 } from '@/lib/api';
 import { appConfig } from '@/lib/config';
-import type { ActivityType, Lead, LeadStage } from '@/lib/types';
+import type { ActivityType, AuthUser, Lead, LeadStage } from '@/lib/types';
 import { useDialog } from '@/components/ui/dialog-provider';
+import { WhatsAppButton } from '@/components/lead/whatsapp-button';
 import { cn } from '@/lib/utils';
 
 const ALL_STAGES: LeadStage[] = [
@@ -42,7 +45,11 @@ function fmt(v: string | null | undefined): string {
   return v ? String(v) : '—';
 }
 
-export function LeadDetailClient({ lead: initial }: { lead: Lead }) {
+function isManager(user: AuthUser) {
+  return ['SALES_MANAGER', 'ADMIN', 'SUPER_ADMIN'].includes(user.role);
+}
+
+export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: AuthUser }) {
   const [lead, setLead] = useState(initial);
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -51,6 +58,8 @@ export function LeadDetailClient({ lead: initial }: { lead: Lead }) {
   const [actType, setActType] = useState<ActivityType>('WHATSAPP');
   const [actNote, setActNote] = useState('');
   const [actOutcome, setActOutcome] = useState('');
+
+  const repName = user.name ?? 'فريق ديڤيا';
 
   async function logActivity(e: React.FormEvent) {
     e.preventDefault();
@@ -123,13 +132,13 @@ export function LeadDetailClient({ lead: initial }: { lead: Lead }) {
   }
 
   async function markWon() {
-    const confirm = await dialog.confirm({
+    const confirmed = await dialog.confirm({
       title: 'تأكيد الإغلاق الناجح',
       message: 'سيتم فتح صفحة العقود مع البيانات المعبأة.',
       confirmLabel: 'إغلاق ناجح',
       tone: 'success',
     });
-    if (!confirm) return;
+    if (!confirmed) return;
     start(async () => {
       try {
         const { lead: updated, deepLink } = await api.leads.markWon(lead.id, {});
@@ -164,6 +173,37 @@ export function LeadDetailClient({ lead: initial }: { lead: Lead }) {
     });
   }
 
+  async function promoteToClient() {
+    const confirmed = await dialog.confirm({
+      title: 'إنشاء ملف عميل',
+      message: `سيتم إنشاء / ربط ملف عميل لـ ${lead.clientName} من هذا العميل المحتمل.`,
+      confirmLabel: 'إنشاء',
+      tone: 'info',
+    });
+    if (!confirmed) return;
+    start(async () => {
+      try {
+        const client = await api.clients.fromLead(lead.id);
+        const clientUrl = `https://admin.devya-solutions.com/clients/${client.id}`;
+        dialog.notify({
+          title: `تم الربط بملف العميل · ${client.code}`,
+          message: `انقر هنا للانتقال إلى صفحة العميل.`,
+          tone: 'success',
+        });
+        window.open(clientUrl, '_blank', 'noopener,noreferrer');
+        router.refresh();
+      } catch (err) {
+        dialog.notify({
+          title: 'فشل إنشاء ملف العميل',
+          message: err instanceof ApiError ? err.message : (err as Error).message,
+          tone: 'danger',
+        });
+      }
+    });
+  }
+
+  const canPromote = isManager(user) && !!lead.email;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
       <div className="space-y-6">
@@ -173,8 +213,29 @@ export function LeadDetailClient({ lead: initial }: { lead: Lead }) {
               <div className="text-xs text-ink-400 ltr-inline">{lead.code}</div>
               <h2 className="text-xl font-semibold text-white">{lead.clientName}</h2>
               {lead.companyName && <div className="text-sm text-ink-300">{lead.companyName}</div>}
+              {/* WhatsApp quick-dial in header */}
+              {lead.phone && (
+                <div className="mt-1.5">
+                  <WhatsAppButton
+                    phone={lead.phone}
+                    clientName={lead.clientName}
+                    repName={repName}
+                  />
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              {canPromote && (
+                <button
+                  onClick={promoteToClient}
+                  disabled={pending}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-sm text-blue-300 hover:bg-blue-500/20 disabled:opacity-60"
+                >
+                  <UserPlus className="h-3.5 w-3.5" />
+                  إنشاء ملف عميل
+                  <ExternalLink className="h-3 w-3 opacity-60" />
+                </button>
+              )}
               <button
                 onClick={scheduleMeeting}
                 disabled={pending}

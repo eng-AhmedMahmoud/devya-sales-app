@@ -147,6 +147,19 @@ export const api = {
       }),
     remove: (id: string) =>
       apiFetch<void>(`/api/admin/sales/leads/${id}`, { method: 'DELETE' }),
+    bulk: (body: { ids: string[]; action: 'delete' | 'setStage' | 'assign'; payload?: { stage?: LeadStage; repId?: string } }) =>
+      apiFetch<{ ok: number; failed: { id: string; reason: string }[] }>('/api/admin/sales/leads/bulk', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+  },
+
+  clients: {
+    fromLead: (leadId: string) =>
+      apiFetch<{ id: string; code: string; name: string; email: string | null }>(`/api/admin/clients/from-lead/${leadId}`, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      }),
   },
 
   activities: {
