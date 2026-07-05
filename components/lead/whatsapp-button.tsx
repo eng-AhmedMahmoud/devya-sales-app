@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 function normalizePhone(raw: string): string {
   // Strip whitespace, dashes, parentheses
-  let p = raw.replace(/[\s\-().]/g, '');
+  const p = raw.replace(/[\s\-().]/g, '');
 
   if (p.startsWith('+')) {
     // already E.164 with +
