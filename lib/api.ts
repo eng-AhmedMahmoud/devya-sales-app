@@ -3,6 +3,8 @@ import type {
   ActivityType,
   AuthUser,
   BudgetBucket,
+  ClientType,
+  ClientTypeFunnelBucket,
   FunnelBucket,
   Lead,
   LeadActivity,
@@ -67,6 +69,7 @@ export interface CreateLeadPayload {
   source: LeadSource;
   campaignName?: string;
   stage?: LeadStage;
+  clientType?: ClientType;
   assignedRepId?: string;
   assignedRepName?: string;
 }
@@ -75,6 +78,7 @@ export type UpdateLeadPayload = Partial<CreateLeadPayload>;
 
 export interface ListLeadsParams {
   stage?: LeadStage;
+  clientType?: ClientType;
   outcome?: PipelineOutcome;
   source?: LeadSource;
   budget?: BudgetBucket;
@@ -109,6 +113,21 @@ export const api = {
       body: JSON.stringify({ email, password }),
     }),
   logout: () => apiFetch<void>('/api/auth/logout', { method: 'POST' }),
+  verifyResetOtp: (email: string, code: string) =>
+    apiFetch<{ resetToken: string }>('/api/auth/verify-reset-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    }),
+  verifyEmail: (email: string, code: string) =>
+    apiFetch<{ ok: true }>('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ email, code }),
+    }),
+  resendVerification: (email: string) =>
+    apiFetch<{ ok: true }>('/api/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
 
   team: (cookieHeader?: string) =>
     apiFetch<TeamMember[]>('/api/admin/task-team/members', { cookieHeader }),
@@ -126,6 +145,11 @@ export const api = {
       apiFetch<Lead>(`/api/admin/sales/leads/${id}/stage`, {
         method: 'POST',
         body: JSON.stringify({ stage, note }),
+      }),
+    setClientType: (id: string, clientType: ClientType, note?: string) =>
+      apiFetch<Lead>(`/api/admin/sales/leads/${id}/client-type`, {
+        method: 'POST',
+        body: JSON.stringify({ clientType, note }),
       }),
     scheduleMeeting: (
       id: string,
@@ -147,7 +171,7 @@ export const api = {
       }),
     remove: (id: string) =>
       apiFetch<void>(`/api/admin/sales/leads/${id}`, { method: 'DELETE' }),
-    bulk: (body: { ids: string[]; action: 'delete' | 'setStage' | 'assign'; payload?: { stage?: LeadStage; repId?: string } }) =>
+    bulk: (body: { ids: string[]; action: 'delete' | 'setStage' | 'setClientType' | 'assign'; payload?: { stage?: LeadStage; clientType?: ClientType; repId?: string } }) =>
       apiFetch<{ ok: number; failed: { id: string; reason: string }[] }>('/api/admin/sales/leads/bulk', {
         method: 'POST',
         body: JSON.stringify(body),

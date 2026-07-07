@@ -17,6 +17,13 @@ export type LeadStage =
   | 'LOST'
   | 'GHOSTED';
 
+export type ClientType =
+  | 'COLD_LEAD'
+  | 'HOT_LEAD'
+  | 'PRE_CONVERTED'
+  | 'ACTIVE_CLIENT'
+  | 'INACTIVE_CLIENT';
+
 export type LeadSource =
   | 'FB'
   | 'IG'
@@ -43,6 +50,7 @@ export type LeadEventType =
   | 'CREATED'
   | 'ASSIGNED'
   | 'STAGE_CHANGED'
+  | 'CLIENT_TYPE_CHANGED'
   | 'ACTIVITY_LOGGED'
   | 'MEETING_SCHEDULED'
   | 'MEETING_COMPLETED'
@@ -112,6 +120,7 @@ export interface Lead {
   source: LeadSource;
   campaignName: string | null;
   stage: LeadStage;
+  clientType: ClientType;
   outcome: PipelineOutcome;
   assignedRepId: string | null;
   assignedRep?: { id: string; name: string | null; email: string } | null;
@@ -136,6 +145,11 @@ export interface Lead {
 
 export interface FunnelBucket {
   stage: LeadStage;
+  count: number;
+}
+
+export interface ClientTypeFunnelBucket {
+  clientType: ClientType;
   count: number;
 }
 
