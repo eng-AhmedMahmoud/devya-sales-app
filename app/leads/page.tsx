@@ -5,8 +5,8 @@ import { Download, Plus } from 'lucide-react';
 import { Shell } from '@/components/ui/shell';
 import { PageHeader } from '@/components/ui/page-header';
 import { LeadsListClient } from '@/components/lead/leads-list-client';
-import { api, ApiError, BUDGET_LABELS_AR, SOURCE_LABELS_AR, STAGE_LABELS_AR } from '@/lib/api';
-import type { LeadStage, LeadSource, BudgetBucket } from '@/lib/types';
+import { api, ApiError, BUDGET_LABELS_AR, CLIENT_TYPE_LABELS_AR, SOURCE_LABELS_AR, STAGE_LABELS_AR } from '@/lib/api';
+import type { LeadStage, LeadSource, BudgetBucket, ClientType } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +15,7 @@ export default async function LeadsListPage({
 }: {
   searchParams: Promise<{
     stage?: LeadStage;
+    clientType?: ClientType;
     source?: LeadSource;
     budget?: BudgetBucket;
     q?: string;
@@ -33,7 +34,7 @@ export default async function LeadsListPage({
   const page = Math.max(1, Number(sp.page) || 1);
   const [{ items: leads, total, pageSize }, team] = await Promise.all([
     api.leads.list(
-      { stage: sp.stage, source: sp.source, budget: sp.budget, q: sp.q, page },
+      { stage: sp.stage, clientType: sp.clientType, source: sp.source, budget: sp.budget, q: sp.q, page },
       cookieHeader,
     ),
     api.team(cookieHeader).catch(() => []),
@@ -45,6 +46,7 @@ export default async function LeadsListPage({
     const params = new URLSearchParams();
     if (sp.q) params.set('q', sp.q);
     if (sp.stage) params.set('stage', sp.stage);
+    if (sp.clientType) params.set('clientType', sp.clientType);
     if (sp.source) params.set('source', sp.source);
     if (sp.budget) params.set('budget', sp.budget);
     if (p > 1) params.set('page', String(p));
@@ -60,7 +62,7 @@ export default async function LeadsListPage({
         actions={
           <div className="flex items-center gap-2">
             <a
-              href={api.exportUrl({ stage: sp.stage, source: sp.source, budget: sp.budget, q: sp.q })}
+              href={api.exportUrl({ stage: sp.stage, clientType: sp.clientType, source: sp.source, budget: sp.budget, q: sp.q })}
               className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-ink-200 hover:bg-white/5"
             >
               <Download className="h-3.5 w-3.5" />
@@ -96,6 +98,19 @@ export default async function LeadsListPage({
           >
             <option value="">الكل</option>
             {Object.entries(STAGE_LABELS_AR).map(([k, v]) => (
+              <option key={k} value={k}>{v}</option>
+            ))}
+          </select>
+        </label>
+        <label className="text-xs text-ink-300">
+          نوع العميل
+          <select
+            name="clientType"
+            defaultValue={sp.clientType ?? ''}
+            className="block mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
+          >
+            <option value="">الكل</option>
+            {Object.entries(CLIENT_TYPE_LABELS_AR).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
             ))}
           </select>

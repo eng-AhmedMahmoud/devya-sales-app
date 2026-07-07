@@ -17,13 +17,15 @@ import {
 import {
   ACTIVITY_LABELS_AR,
   BUDGET_LABELS_AR,
+  CLIENT_TYPE_LABELS_AR,
+  CLIENT_TYPE_ORDER,
   SOURCE_LABELS_AR,
   STAGE_LABELS_AR,
   api,
   ApiError,
 } from '@/lib/api';
 import { appConfig } from '@/lib/config';
-import type { ActivityType, AuthUser, Lead, LeadStage } from '@/lib/types';
+import type { ActivityType, AuthUser, ClientType, Lead, LeadStage } from '@/lib/types';
 import { useDialog } from '@/components/ui/dialog-provider';
 import { WhatsAppButton } from '@/components/lead/whatsapp-button';
 import { cn } from '@/lib/utils';
@@ -99,6 +101,23 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل النقل',
+          message: (err as Error).message,
+          tone: 'danger',
+        });
+      }
+    });
+  }
+
+  async function changeClientType(next: ClientType) {
+    if (next === lead.clientType) return;
+    start(async () => {
+      try {
+        const updated = await api.leads.setClientType(lead.id, next);
+        setLead(updated);
+        router.refresh();
+      } catch (err) {
+        dialog.notify({
+          title: 'فشل تغيير نوع العميل',
           message: (err as Error).message,
           tone: 'danger',
         });
@@ -276,6 +295,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
             />
             <Detail label="المندوب" value={lead.assignedRepName} />
             <Detail label="المرحلة" value={STAGE_LABELS_AR[lead.stage]} />
+            <Detail label="نوع العميل" value={CLIENT_TYPE_LABELS_AR[lead.clientType]} />
             <Detail label="مجال العمل" value={lead.industry} />
             <Detail label="الجمهور المستهدف" value={lead.targetAudience} />
           </div>
@@ -375,6 +395,28 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
               >
                 <span>{STAGE_LABELS_AR[s]}</span>
                 {s === lead.stage && <ArrowRight className="h-3 w-3" />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="surface-strong p-4">
+          <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">نوع العميل (قمع المبيعات)</div>
+          <div className="grid grid-cols-1 gap-1.5">
+            {CLIENT_TYPE_ORDER.map((t) => (
+              <button
+                key={t}
+                onClick={() => changeClientType(t)}
+                disabled={pending || t === lead.clientType}
+                className={cn(
+                  'inline-flex items-center justify-between gap-1 rounded-md border px-2 py-1.5 text-xs',
+                  t === lead.clientType
+                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+                    : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
+                )}
+              >
+                <span>{CLIENT_TYPE_LABELS_AR[t]}</span>
+                {t === lead.clientType && <ArrowRight className="h-3 w-3" />}
               </button>
             ))}
           </div>

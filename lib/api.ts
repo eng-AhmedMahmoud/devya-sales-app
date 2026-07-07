@@ -212,6 +212,8 @@ export const api = {
   reports: {
     funnel: (cookieHeader?: string) =>
       apiFetch<FunnelBucket[]>('/api/admin/sales/reports/funnel', { cookieHeader }),
+    clientTypeFunnel: (cookieHeader?: string) =>
+      apiFetch<ClientTypeFunnelBucket[]>('/api/admin/sales/reports/client-type-funnel', { cookieHeader }),
     leaderboard: (month?: string, cookieHeader?: string) =>
       apiFetch<RepLeaderboardEntry[] | RepLeaderboardEntry>(
         `/api/admin/sales/reports/leaderboard${qs({ month })}`,
@@ -263,6 +265,23 @@ export const STAGE_LABELS_AR: Record<LeadStage, string> = {
   LOST: 'مغلق خاسر',
   GHOSTED: 'لم يرد',
 };
+
+export const CLIENT_TYPE_LABELS_AR: Record<ClientType, string> = {
+  COLD_LEAD: 'عميل محتمل بارد',
+  HOT_LEAD: 'عميل محتمل ساخن',
+  PRE_CONVERTED: 'قبل التحويل',
+  ACTIVE_CLIENT: 'عميل نشط',
+  INACTIVE_CLIENT: 'عميل غير نشط',
+};
+
+// Funnel presentation order: cold → hot → pre-converted → active → inactive.
+export const CLIENT_TYPE_ORDER: ClientType[] = [
+  'COLD_LEAD',
+  'HOT_LEAD',
+  'PRE_CONVERTED',
+  'ACTIVE_CLIENT',
+  'INACTIVE_CLIENT',
+];
 
 export const SOURCE_LABELS_AR: Record<LeadSource, string> = {
   FB: 'فيسبوك',

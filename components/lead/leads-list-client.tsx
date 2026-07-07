@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Layers } from 'lucide-react';
-import { BUDGET_LABELS_AR, SOURCE_LABELS_AR, STAGE_LABELS_AR } from '@/lib/api';
+import { BUDGET_LABELS_AR, CLIENT_TYPE_LABELS_AR, SOURCE_LABELS_AR, STAGE_LABELS_AR } from '@/lib/api';
 import type { AuthUser, Lead, TeamMember } from '@/lib/types';
 import { BulkToolbar } from '@/components/lead/bulk-toolbar';
 import { WhatsAppButton } from '@/components/lead/whatsapp-button';
@@ -71,7 +71,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
   }, []);
 
   const repName = user.name ?? 'فريق ديڤيا';
-  const colCount = bulkMode ? 9 : 8;
+  const colCount = bulkMode ? 10 : 9;
 
   return (
     <>
@@ -97,6 +97,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
               <th className="text-start px-4 py-3">المصدر</th>
               <th className="text-start px-4 py-3">الميزانية</th>
               <th className="text-start px-4 py-3">المرحلة</th>
+              <th className="text-start px-4 py-3">نوع العميل</th>
               <th className="text-start px-4 py-3">المندوب</th>
             </tr>
           </thead>
@@ -146,6 +147,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
                   <td className="px-4 py-3 text-ink-300">{SOURCE_LABELS_AR[l.source]}</td>
                   <td className="px-4 py-3 text-ink-300">{BUDGET_LABELS_AR[l.budget]}</td>
                   <td className="px-4 py-3 text-ink-300">{STAGE_LABELS_AR[l.stage]}</td>
+                  <td className="px-4 py-3 text-ink-300">{CLIENT_TYPE_LABELS_AR[l.clientType]}</td>
                   <td className="px-4 py-3 text-ink-300">{l.assignedRepName ?? '—'}</td>
                 </tr>
               );

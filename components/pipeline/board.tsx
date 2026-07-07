@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Lead, LeadStage } from '@/lib/types';
-import { STAGE_LABELS_AR, OPEN_STAGES, api } from '@/lib/api';
+import { STAGE_LABELS_AR, CLIENT_TYPE_LABELS_AR, OPEN_STAGES, api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { useDialog } from '@/components/ui/dialog-provider';
 
@@ -96,6 +96,9 @@ export function PipelineBoard({ leads: initial }: { leads: Lead[] }) {
                   {lead.companyName && (
                     <div className="text-xs text-ink-400 mt-0.5 truncate">{lead.companyName}</div>
                   )}
+                  <div className="mt-1.5">
+                    <span className="chip text-[10px]">{CLIENT_TYPE_LABELS_AR[lead.clientType]}</span>
+                  </div>
                   <div className="mt-2 flex items-center justify-between gap-2 text-[11px] text-ink-400">
                     <span className="ltr-inline">{lead.assignedRepName ?? '—'}</span>
                     {lead.expectedValueSar != null && (

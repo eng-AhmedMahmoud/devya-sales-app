@@ -3,8 +3,8 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { api, ApiError, BUDGET_LABELS_AR, SOURCE_LABELS_AR } from '@/lib/api';
-import type { BudgetBucket, LeadSource, TeamMember } from '@/lib/types';
+import { api, ApiError, BUDGET_LABELS_AR, CLIENT_TYPE_LABELS_AR, SOURCE_LABELS_AR } from '@/lib/api';
+import type { BudgetBucket, ClientType, LeadSource, TeamMember } from '@/lib/types';
 import { useDialog } from '@/components/ui/dialog-provider';
 
 export function LeadForm({ team }: { team: TeamMember[] }) {
@@ -24,6 +24,7 @@ export function LeadForm({ team }: { team: TeamMember[] }) {
     campaignName: '',
     source: 'FB' as LeadSource,
     budget: 'UNKNOWN' as BudgetBucket,
+    clientType: 'COLD_LEAD' as ClientType,
     expectedValueSar: '',
     assignedRepId: '',
   });
@@ -49,6 +50,7 @@ export function LeadForm({ team }: { team: TeamMember[] }) {
           campaignName: state.campaignName.trim() || undefined,
           source: state.source,
           budget: state.budget,
+          clientType: state.clientType,
           expectedValueSar: state.expectedValueSar ? Number(state.expectedValueSar) : undefined,
           assignedRepId: state.assignedRepId || undefined,
         });
@@ -104,6 +106,13 @@ export function LeadForm({ team }: { team: TeamMember[] }) {
       <Field label="الميزانية المتوقعة">
         <select value={state.budget} onChange={(e) => set('budget', e.target.value as BudgetBucket)} className={inputCls}>
           {Object.entries(BUDGET_LABELS_AR).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label="نوع العميل">
+        <select value={state.clientType} onChange={(e) => set('clientType', e.target.value as ClientType)} className={inputCls}>
+          {Object.entries(CLIENT_TYPE_LABELS_AR).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
