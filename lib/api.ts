@@ -8,6 +8,7 @@ import type {
   FunnelBucket,
   Lead,
   LeadActivity,
+  LeadNextAction,
   LeadSource,
   LeadStage,
   PipelineOutcome,
@@ -44,14 +45,20 @@ export async function apiFetch<T>(path: string, init?: RequestInit & { cookieHea
   if (!res.ok) {
     let body: unknown = null;
     try { body = await res.json(); } catch {}
-    const message =
-      body && typeof body === 'object' && 'error' in body && typeof (body as { error?: unknown }).error === 'string'
-        ? (body as { error: string }).error
-        : `Request failed with ${res.status}`;
-    throw new ApiError(res.status, body, message);
+    // NestJS error bodies are { message, error, statusCode } — `message` carries
+    // the specific code (e.g. EMAIL_NOT_VERIFIED); `error` is just the status name.
+    throw new ApiError(res.status, body, extractErrorMessage(body) ?? `Request failed with ${res.status}`);
   }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
+}
+
+function extractErrorMessage(body: unknown): string | null {
+  if (!body || typeof body !== 'object') return null;
+  const { message, error } = body as { message?: unknown; error?: unknown };
+  if (typeof message === 'string' && message) return message;
+  if (Array.isArray(message) && typeof message[0] === 'string') return message[0];
+  return typeof error === 'string' && error ? error : null;
 }
 
 export interface CreateLeadPayload {
@@ -110,7 +117,8 @@ export const api = {
   login: (email: string, password: string) =>
     apiFetch<{ user: AuthUser }>('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      // `app` drives the backend's per-app access gate for this app.
+      body: JSON.stringify({ email, password, app: 'sales' }),
     }),
   logout: () => apiFetch<void>('/api/auth/logout', { method: 'POST' }),
   verifyResetOtp: (email: string, code: string) =>
@@ -196,6 +204,20 @@ export const api = {
       apiFetch<LeadActivity>(`/api/admin/sales/leads/${leadId}/activities`, {
         method: 'POST',
         body: JSON.stringify(body),
+      }),
+  },
+
+  nextActions: {
+    list: (leadId: string, cookieHeader?: string) =>
+      apiFetch<LeadNextAction[]>(`/api/admin/sales/leads/${leadId}/next-actions`, { cookieHeader }),
+    create: (leadId: string, text: string) =>
+      apiFetch<LeadNextAction>(`/api/admin/sales/leads/${leadId}/next-actions`, {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      }),
+    remove: (leadId: string, actionId: string) =>
+      apiFetch<{ ok: true }>(`/api/admin/sales/leads/${leadId}/next-actions/${actionId}`, {
+        method: 'DELETE',
       }),
   },
 
