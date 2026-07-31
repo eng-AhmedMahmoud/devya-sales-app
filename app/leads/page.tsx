@@ -79,22 +79,22 @@ export default async function LeadsListPage({
         }
       />
 
-      <form className="surface-strong p-3 mb-4 flex flex-wrap items-end gap-2">
-        <label className="text-xs text-ink-300">
+      <form className="surface-strong p-4 mb-4 flex flex-wrap items-end gap-x-4 gap-y-3">
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
           بحث
           <input
             name="q"
             defaultValue={sp.q ?? ''}
             placeholder="اسم / شركة / رقم"
-            className="block mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100 w-56"
+            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 w-56 focus:outline-none focus:border-white/25 focus:ring-2 focus:ring-white/10"
           />
         </label>
-        <label className="text-xs text-ink-300">
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
           المرحلة
           <select
             name="stage"
             defaultValue={sp.stage ?? ''}
-            className="block mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
+            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
           >
             <option value="">الكل</option>
             {Object.entries(STAGE_LABELS_AR).map(([k, v]) => (
@@ -102,12 +102,12 @@ export default async function LeadsListPage({
             ))}
           </select>
         </label>
-        <label className="text-xs text-ink-300">
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
           نوع العميل
           <select
             name="clientType"
             defaultValue={sp.clientType ?? ''}
-            className="block mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
+            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
           >
             <option value="">الكل</option>
             {Object.entries(CLIENT_TYPE_LABELS_AR).map(([k, v]) => (
@@ -115,12 +115,12 @@ export default async function LeadsListPage({
             ))}
           </select>
         </label>
-        <label className="text-xs text-ink-300">
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
           المصدر
           <select
             name="source"
             defaultValue={sp.source ?? ''}
-            className="block mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
+            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
           >
             <option value="">الكل</option>
             {Object.entries(SOURCE_LABELS_AR).map(([k, v]) => (
@@ -128,12 +128,12 @@ export default async function LeadsListPage({
             ))}
           </select>
         </label>
-        <label className="text-xs text-ink-300">
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
           الميزانية
           <select
             name="budget"
             defaultValue={sp.budget ?? ''}
-            className="block mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
+            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
           >
             <option value="">الكل</option>
             {Object.entries(BUDGET_LABELS_AR).map(([k, v]) => (
@@ -143,7 +143,7 @@ export default async function LeadsListPage({
         </label>
         <button
           type="submit"
-          className="rounded-md bg-white text-ink-900 px-3 py-2 text-sm font-medium hover:bg-ink-100"
+          className="rounded-lg bg-white text-ink-900 px-4 py-2.5 text-sm font-medium hover:bg-ink-100"
         >
           تصفية
         </button>
