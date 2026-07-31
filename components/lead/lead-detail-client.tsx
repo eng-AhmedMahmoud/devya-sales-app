@@ -10,6 +10,7 @@ import {
   Loader2,
   MessageSquare,
   Phone,
+  Sparkles,
   ThumbsDown,
   Trophy,
   UserPlus,
@@ -28,6 +29,7 @@ import { appConfig } from '@/lib/config';
 import type { ActivityType, AuthUser, ClientType, Lead, LeadStage } from '@/lib/types';
 import { useDialog } from '@/components/ui/dialog-provider';
 import { WhatsAppButton } from '@/components/lead/whatsapp-button';
+import { NextActionsBlock } from '@/components/lead/next-actions';
 import { cn } from '@/lib/utils';
 
 const ALL_STAGES: LeadStage[] = [
@@ -119,6 +121,22 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
         dialog.notify({
           title: 'فشل تغيير نوع العميل',
           message: (err as Error).message,
+          tone: 'danger',
+        });
+      }
+    });
+  }
+
+  async function runAiScore() {
+    start(async () => {
+      try {
+        const updated = await api.leads.aiScore(lead.id);
+        setLead(updated);
+        router.refresh();
+      } catch (err) {
+        dialog.notify({
+          title: 'فشل التقييم الذكي',
+          message: err instanceof ApiError ? err.message : (err as Error).message,
           tone: 'danger',
         });
       }
@@ -300,12 +318,50 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
             <Detail label="الجمهور المستهدف" value={lead.targetAudience} />
           </div>
 
+          <div className="mt-4 rounded-md border border-violet-500/20 bg-violet-500/[0.06] p-3">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2 text-sm">
+                <Sparkles className="h-3.5 w-3.5 text-violet-300" />
+                <span className="font-medium text-white">تقييم الذكاء الاصطناعي</span>
+                {lead.aiScore != null && (
+                  <span
+                    dir="ltr"
+                    className={cn(
+                      'rounded-md border px-2 py-0.5 text-xs font-semibold',
+                      lead.aiScore >= 70
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                        : lead.aiScore >= 40
+                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                          : 'border-rose-500/30 bg-rose-500/10 text-rose-300',
+                    )}
+                  >
+                    {lead.aiScore}/100
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={runAiScore}
+                disabled={pending}
+                className="inline-flex items-center gap-1.5 rounded-md border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/20 disabled:opacity-60"
+              >
+                {pending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                {lead.aiScore != null ? 'إعادة التقييم' : 'تقييم الآن'}
+              </button>
+            </div>
+            {lead.aiQualification && (
+              <p className="mt-2 text-sm text-ink-200 whitespace-pre-wrap">{lead.aiQualification}</p>
+            )}
+          </div>
+
           {lead.notes && (
             <div className="mt-4 rounded-md border border-white/[0.06] bg-white/[0.02] p-3 text-sm text-ink-200 whitespace-pre-wrap">
               {lead.notes}
             </div>
           )}
         </div>
+
+        {/* Next actions — free-text reminders pinned to this client */}
+        <NextActionsBlock leadId={lead.id} initial={lead.nextActions ?? []} />
 
         <div className="surface-strong p-5">
           <div className="text-sm font-medium text-white mb-3">تسجيل نشاط</div>
@@ -362,7 +418,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
                 <li key={a.id} className="rounded-md border border-white/[0.06] bg-white/[0.015] p-3">
                   <div className="flex items-center justify-between text-xs text-ink-400">
                     <span>{ACTIVITY_LABELS_AR[a.type]}</span>
-                    <span className="ltr-inline">{new Date(a.occurredAt).toLocaleString('en-GB')}</span>
+                    <span className="ltr-inline">{new Date(a.occurredAt).toLocaleString('en-GB', { hour12: true })}</span>
                   </div>
                   {a.outcome && <div className="text-sm text-white mt-1">{a.outcome}</div>}
                   {a.note && <div className="text-sm text-ink-300 mt-1 whitespace-pre-wrap">{a.note}</div>}
@@ -426,7 +482,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
           <div className="surface p-4">
             <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">اجتماع مسجل</div>
             <div className="text-sm text-white ltr-inline">
-              {new Date(lead.booking.scheduledAt).toLocaleString('en-GB')}
+              {new Date(lead.booking.scheduledAt).toLocaleString('en-GB', { hour12: true })}
             </div>
             <div className="text-xs text-ink-400 mt-1">
               {lead.booking.calendarType} · {lead.booking.status}

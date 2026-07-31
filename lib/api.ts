@@ -177,6 +177,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ lossReason }),
       }),
+    aiScore: (id: string) =>
+      apiFetch<Lead>(`/api/admin/sales/leads/${id}/ai-score`, { method: 'POST' }),
     remove: (id: string) =>
       apiFetch<void>(`/api/admin/sales/leads/${id}`, { method: 'DELETE' }),
     bulk: (body: { ids: string[]; action: 'delete' | 'setStage' | 'setClientType' | 'assign'; payload?: { stage?: LeadStage; clientType?: ClientType; repId?: string } }) =>

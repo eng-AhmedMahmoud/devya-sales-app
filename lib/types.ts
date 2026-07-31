@@ -136,11 +136,24 @@ export interface Lead {
   wonAt: string | null;
   lostAt: string | null;
   lossReason: string | null;
+  aiScore: number | null;
+  aiQualification: string | null;
+  aiScoredAt: string | null;
   creationDay: string;
   createdAt: string;
   updatedAt: string;
   activities?: LeadActivity[];
   events?: LeadEvent[];
+  nextActions?: LeadNextAction[];
+}
+
+export interface LeadNextAction {
+  id: string;
+  leadId: string;
+  text: string;
+  createdById: string | null;
+  createdByName: string | null;
+  createdAt: string;
 }
 
 export interface FunnelBucket {
