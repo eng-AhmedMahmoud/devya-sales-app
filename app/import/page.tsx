@@ -21,7 +21,7 @@ export default async function ImportPage() {
   const team = await api.team(cookieHeader).catch(() => []);
 
   return (
-    <Shell>
+    <Shell isManager>
       <PageHeader title="استيراد عملاء من Excel" subtitle="ارفع ملف .xlsx — راجع الصفوف — طبّق" />
       <ImportClient team={team} />
     </Shell>

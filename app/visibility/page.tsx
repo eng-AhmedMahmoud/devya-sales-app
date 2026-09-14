@@ -2,31 +2,32 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { Shell } from '@/components/ui/shell';
 import { PageHeader } from '@/components/ui/page-header';
-import { TargetsClient } from '@/components/targets/targets-client';
+import { VisibilityClient } from '@/components/visibility/visibility-client';
 import { api, ApiError } from '@/lib/api';
+import { isManagerRole } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
-export default async function TargetsPage() {
+export default async function VisibilityPage() {
   const cookieHeader = (await headers()).get('cookie') ?? '';
   try {
     const { user } = await api.me(cookieHeader);
-    if (!['SALES_MANAGER', 'SUPER_ADMIN', 'ADMIN'].includes(user.role)) {
+    if (!isManagerRole(user.role)) {
       redirect('/');
     }
   } catch (err) {
     if (err instanceof ApiError && (err.status === 401 || err.status === 403)) redirect('/login');
     throw err;
   }
-  const [targets, team] = await Promise.all([
-    api.targets.list(undefined, cookieHeader).catch(() => []),
-    api.team(cookieHeader).catch(() => []),
-  ]);
+  const overview = await api.visibility.reps('SALES', cookieHeader);
 
   return (
     <Shell isManager>
-      <PageHeader title="أهداف المندوبين" subtitle="حدد هدف الإيراد الشهري لكل مندوب" />
-      <TargetsClient targets={targets} team={team} />
+      <PageHeader
+        title="صلاحيات رؤية العملاء"
+        subtitle="حدد من يرى عملاء من داخل فريق المبيعات"
+      />
+      <VisibilityClient overview={overview} />
     </Shell>
   );
 }

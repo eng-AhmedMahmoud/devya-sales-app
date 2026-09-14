@@ -2,21 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design tokens — contrast overhaul 2026-09-14 ─────────────────────────
+   Surfaces are SOLID, not translucent gradients: the old cards sat at
+   rgba(255,255,255,.025) over #0A0A0A with .08 borders, so inputs read as
+   empty space on a real screen (~3.7:1). Every pair below clears 4.5:1 and
+   every field keeps a border that is visible without hover.
+   These values are shared verbatim with outdoor-app — keep them in sync. */
 :root {
+  --page: #0b0d0f;
+  --surface: #16191d; /* ink-825 */
+  --surface-border: rgba(255, 255, 255, 0.16);
+  --surface-strong: #1c2026; /* ink-775 */
+  --surface-strong-border: rgba(255, 255, 255, 0.22);
+  --field: #1f242a; /* ink-760 */
+  --field-border: rgba(255, 255, 255, 0.24);
+  --field-border-hover: rgba(255, 255, 255, 0.36);
+  --field-border-focus: rgba(255, 255, 255, 0.55);
+  --accent: #10b981;
+  --accent-text: #34d399; /* accent on a dark fill */
+  --text: #f5f5f5;
+  --text-muted: #a3a3a3; /* ink-300 — secondary text */
+  --text-faint: #737373; /* ink-400 — decorative only, never text */
+  --text-hint: #8e9399; /* ink-450 — placeholders/disabled: still clears 4.5:1 */
   --foreground-rgb: 245, 245, 245;
-  --background-start-rgb: 10, 10, 10;
-  --background-end-rgb: 15, 15, 15;
 }
 
-html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; background-color: #0a0a0a; }
+/* Base 16px (iOS zoom guard) → 17px from `sm` up; Arabic renders small. */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--page);
+  -webkit-tap-highlight-color: rgba(16, 185, 129, 0.24);
+}
+@media (min-width: 640px) {
+  html { font-size: 17px; }
+}
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(16, 185, 129, 0.05), transparent 60%),
-    radial-gradient(1000px 700px at 0% 110%, rgba(139, 92, 246, 0.05), transparent 60%),
-    linear-gradient(to bottom, #0a0a0a, #0f0f0f 60%, #0a0a0a);
-  background-attachment: fixed;
+  color: var(--text);
+  background: var(--page);
   min-height: 100vh;
   font-family: var(--font-sora), 'Segoe UI', 'Cairo', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,28 +49,113 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* Cairo fallback renders a notch smaller than Sora — nudge Arabic back up. */
+html[dir='rtl'] body { font-size: 1.05rem; }
+
 ::selection { background-color: #f5f5f5; color: #0a0a0a; }
 
-html::-webkit-scrollbar { width: 8px; }
-html::-webkit-scrollbar-track { background: #141414; }
-html::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; border: 1px solid #2a2a2a; }
-html::-webkit-scrollbar-thumb:hover { background: #444; }
+html::-webkit-scrollbar { width: 10px; }
+html::-webkit-scrollbar-track { background: var(--surface); }
+html::-webkit-scrollbar-thumb { background: #3a4048; border-radius: 5px; border: 1px solid #4a515a; }
+html::-webkit-scrollbar-thumb:hover { background: #4a515a; }
 
-input, textarea, select, button { font-size: 16px; }
-@media (max-width: 768px) {
-  input:focus, textarea:focus, select:focus { font-size: 16px !important; }
+/* ── Form controls ────────────────────────────────────────────────────────
+   Single source of truth for fill/border/height. Markup must NOT re-declare
+   background or border on a field — a utility class would win over these
+   element rules and bring the invisible inputs back. */
+input:not([type='checkbox']):not([type='radio']):not([type='file']),
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--field-border);
+  background-color: var(--field);
+  color: var(--text);
+  padding: 0.625rem 0.875rem;
+  font-size: 16px; /* iOS refuses to zoom at >=16px */
+  line-height: 1.5;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+@media (min-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='file']),
+  select,
+  textarea { font-size: 17px; }
+}
+/* Coarse pointer = finger: roomier targets. */
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']):not([type='file']),
+  select,
+  textarea { min-height: 48px; padding: 0.75rem 1rem; }
+}
+
+textarea { min-height: 112px; padding-top: 0.75rem; line-height: 1.7; resize: vertical; }
+
+input[type='file'] { min-height: 44px; color: var(--text); }
+
+input::placeholder,
+textarea::placeholder { color: var(--text-hint); }
+
+input:not([type='checkbox']):not([type='radio']):not([type='file']):hover,
+select:hover,
+textarea:hover { border-color: var(--field-border-hover); }
+
+input:not([type='checkbox']):not([type='radio']):not([type='file']):focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--field-border-focus);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.45);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled { opacity: 0.55; cursor: not-allowed; }
+
+input[type='checkbox'],
+input[type='radio'] {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* ── Touch ergonomics (§3.3) ──────────────────────────────────────────────
+   Every interactive control is at least 44px tall, 48px under a finger. */
+button { min-height: 44px; }
+button:not(:disabled) { cursor: pointer; }
+@media (pointer: coarse) {
+  button { min-height: 48px; }
+}
+button:not(:disabled):active,
+.tap:active,
+.tap-box:active { transform: translateY(1px); }
+
+/* Link or wrapper that must behave as a tap target. `.tap` only raises the
+   height — the element keeps whatever display utility the markup gives it. */
+.tap { min-height: 44px; }
+.tap-box {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (pointer: coarse) {
+  .tap { min-height: 48px; }
+  .tap-box { min-height: 48px; min-width: 48px; }
 }
 
 .surface {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 14px;
-  backdrop-filter: blur(8px);
 }
 
 .surface-strong {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-strong);
+  border: 1px solid var(--surface-strong-border);
   border-radius: 14px;
 }
 
@@ -57,22 +167,36 @@ input, textarea, select, button { font-size: 16px; }
   background-position: -1px -1px;
 }
 
-.ring-focus:focus-visible {
+/* Focus ring readable on the new solid fills: 2px white + 4px accent. */
+.ring-focus:focus-visible,
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15), 0 0 0 4px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18), 0 0 0 6px rgba(16, 185, 129, 0.5);
+}
+
+/* Field label — 15px / 600 (was 13px / 500 and unreadable, see §3.2). */
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #d4d4d4;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  color: #A3A3A3;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--field);
+  color: var(--text-muted);
 }
 
 .ltr-inline { unicode-bidi: isolate; direction: ltr; display: inline-block; }
@@ -83,39 +207,31 @@ input, textarea, select, button { font-size: 16px; }
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  button:not(:disabled):active, .tap:active, .tap-box:active { transform: none; }
 }
 
 /* ── Form selects — system-wide dark popup, spacing, custom chevron ────────
    Native <select> popups render white + cramped + harsh-blue on dark UI.
    color-scheme:dark darkens the OS popup; appearance:none swaps the arrow for
    a themed chevron; option rules add spacing where the engine honors them
-   (Firefox / Chromium on Win+Linux). Leaves each select's own bg/border. */
+   (Firefox / Chromium on Win+Linux). Fill/border come from the field rules. */
 select {
   color-scheme: dark;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d4d4d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1rem;
-  padding-inline-end: 2.25rem !important;
+  background-position: right 0.875rem center;
+  background-size: 1.125rem;
+  padding-inline-end: 2.5rem !important;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 select:dir(rtl) {
-  background-position: left 0.75rem center;
-}
-select:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-select:focus-visible {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+  background-position: left 0.875rem center;
 }
 select option {
-  background-color: #141414;
+  background-color: #1f242a;
   color: #f5f5f5;
   padding: 10px 12px;
   min-height: 2.25rem;
@@ -126,5 +242,5 @@ select option:checked {
   font-weight: 600;
 }
 select option:disabled {
-  color: #525252;
+  color: #737373;
 }

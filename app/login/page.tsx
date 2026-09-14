@@ -19,22 +19,20 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-grid px-6 py-10">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-grid px-5 py-10">
+      <div className="w-full max-w-md">
         <div className="flex flex-col items-center gap-2 mb-8">
           <DevyaLogo width={120} />
-          <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] uppercase tracking-wider text-ink-300">
-            Sales
-          </span>
+          <span className="chip">Sales</span>
         </div>
-        <div className="surface-strong p-6">
-          <h1 className="text-lg font-semibold text-white mb-1">تسجيل الدخول</h1>
-          <p className="text-sm text-ink-400 mb-5">وصول داخلي لفريق المبيعات فقط.</p>
+        <div className="surface-strong h-fit p-6">
+          <h1 className="text-xl font-semibold text-white mb-1">تسجيل الدخول</h1>
+          <p className="text-base text-ink-300 mb-5">وصول داخلي لفريق المبيعات فقط.</p>
           <Suspense fallback={null}>
             <LoginForm />
           </Suspense>
         </div>
-        <p className="mt-6 text-center text-xs text-ink-500">
+        <p className="mt-6 text-center text-sm text-ink-300">
           مشاكل تسجيل الدخول؟ تواصل مع المشرف.
         </p>
       </div>

@@ -23,7 +23,7 @@ import {
   SOURCE_LABELS_AR,
   STAGE_LABELS_AR,
   api,
-  ApiError,
+  errorMessageAr,
 } from '@/lib/api';
 import { appConfig } from '@/lib/config';
 import type { ActivityType, AuthUser, ClientType, Lead, LeadStage } from '@/lib/types';
@@ -53,7 +53,21 @@ function isManager(user: AuthUser) {
   return ['SALES_MANAGER', 'ADMIN', 'SUPER_ADMIN'].includes(user.role);
 }
 
-export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: AuthUser }) {
+/**
+ * `canWrite` is owner-or-manager, resolved on the server. A rep who reached
+ * this lead through a visibility grant sees the same card with every mutation
+ * control gone (spec §2.2) — the backend refuses them anyway, and an enabled
+ * button that always fails is worse than no button.
+ */
+export function LeadDetailClient({
+  lead: initial,
+  user,
+  canWrite,
+}: {
+  lead: Lead;
+  user: AuthUser;
+  canWrite: boolean;
+}) {
   const [lead, setLead] = useState(initial);
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -86,7 +100,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل التسجيل',
-          message: err instanceof ApiError ? err.message : (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -103,7 +117,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل النقل',
-          message: (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -120,7 +134,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل تغيير نوع العميل',
-          message: (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -136,7 +150,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل التقييم الذكي',
-          message: err instanceof ApiError ? err.message : (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -161,7 +175,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل الحجز',
-          message: (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -185,7 +199,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل الإغلاق',
-          message: (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -203,7 +217,7 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل الإغلاق',
-          message: (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
@@ -232,24 +246,24 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
       } catch (err) {
         dialog.notify({
           title: 'فشل إنشاء ملف العميل',
-          message: err instanceof ApiError ? err.message : (err as Error).message,
+          message: errorMessageAr(err),
           tone: 'danger',
         });
       }
     });
   }
 
-  const canPromote = isManager(user) && !!lead.email;
+  const canPromote = canWrite && isManager(user) && !!lead.email;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
-      <div className="space-y-6">
-        <div className="surface-strong p-5">
-          <div className="flex items-center justify-between gap-3 mb-4">
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-5">
+      <div className="space-y-5">
+        <div className="surface-strong h-fit p-5 md:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
             <div>
-              <div className="text-xs text-ink-400 ltr-inline">{lead.code}</div>
+              <div className="text-sm text-ink-300 ltr-inline">{lead.code}</div>
               <h2 className="text-xl font-semibold text-white">{lead.clientName}</h2>
-              {lead.companyName && <div className="text-sm text-ink-300">{lead.companyName}</div>}
+              {lead.companyName && <div className="text-base text-ink-200">{lead.companyName}</div>}
               {/* WhatsApp quick-dial in header */}
               {lead.phone && (
                 <div className="mt-1.5">
@@ -266,41 +280,51 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
                 <button
                   onClick={promoteToClient}
                   disabled={pending}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-sm text-blue-300 hover:bg-blue-500/20 disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-md border border-blue-400/45 bg-blue-500/15 px-4 text-sm font-medium text-blue-300 hover:bg-blue-500/25 disabled:opacity-60 ring-focus"
                 >
-                  <UserPlus className="h-3.5 w-3.5" />
+                  <UserPlus className="h-4 w-4" />
                   إنشاء ملف عميل
-                  <ExternalLink className="h-3 w-3 opacity-60" />
+                  <ExternalLink className="h-4 w-4 opacity-70" />
                 </button>
               )}
-              <button
-                onClick={scheduleMeeting}
-                disabled={pending}
-                className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-ink-200 hover:bg-white/5"
-              >
-                <Calendar className="h-3.5 w-3.5" />
-                حجز اجتماع
-              </button>
-              <button
-                onClick={markWon}
-                disabled={pending || lead.outcome === 'WON'}
-                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 text-ink-900 px-3 py-1.5 text-sm font-medium hover:bg-emerald-400 disabled:opacity-60"
-              >
-                <Trophy className="h-3.5 w-3.5" />
-                فوز
-              </button>
-              <button
-                onClick={markLost}
-                disabled={pending || lead.outcome === 'LOST'}
-                className="inline-flex items-center gap-1.5 rounded-md border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 text-sm text-rose-300 hover:bg-rose-500/20 disabled:opacity-60"
-              >
-                <ThumbsDown className="h-3.5 w-3.5" />
-                خسارة
-              </button>
+              {canWrite && (
+                <>
+                  <button
+                    onClick={scheduleMeeting}
+                    disabled={pending}
+                    className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    حجز اجتماع
+                  </button>
+                  <button
+                    onClick={markWon}
+                    disabled={pending || lead.outcome === 'WON'}
+                    className="inline-flex items-center gap-2 rounded-md bg-emerald-500 text-ink-900 px-4 text-sm font-semibold hover:bg-emerald-400 disabled:opacity-60 ring-focus"
+                  >
+                    <Trophy className="h-4 w-4" />
+                    فوز
+                  </button>
+                  <button
+                    onClick={markLost}
+                    disabled={pending || lead.outcome === 'LOST'}
+                    className="inline-flex items-center gap-2 rounded-md border border-rose-400/45 bg-rose-500/15 px-4 text-sm font-medium text-rose-300 hover:bg-rose-500/25 disabled:opacity-60 ring-focus"
+                  >
+                    <ThumbsDown className="h-4 w-4" />
+                    خسارة
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {!canWrite && (
+            <p className="mb-5 rounded-md border border-white/[0.18] bg-ink-760 p-3.5 text-base text-ink-200">
+              هذا العميل مسند إلى {fmt(lead.assignedRepName)}. لديك صلاحية الاطلاع فقط.
+            </p>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4 text-base">
             <Detail label="الهاتف" value={lead.phone} ltr />
             <Detail label="البريد" value={lead.email} ltr />
             <Detail label="المصدر" value={SOURCE_LABELS_AR[lead.source]} />
@@ -318,189 +342,207 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
             <Detail label="الجمهور المستهدف" value={lead.targetAudience} />
           </div>
 
-          <div className="mt-4 rounded-md border border-violet-500/20 bg-violet-500/[0.06] p-3">
+          <div className="mt-5 rounded-md border border-violet-400/35 bg-violet-500/[0.12] p-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-2 text-sm">
-                <Sparkles className="h-3.5 w-3.5 text-violet-300" />
-                <span className="font-medium text-white">تقييم الذكاء الاصطناعي</span>
+              <div className="flex items-center gap-2 text-base">
+                <Sparkles className="h-4 w-4 text-violet-300" />
+                <span className="font-semibold text-white">تقييم الذكاء الاصطناعي</span>
                 {lead.aiScore != null && (
                   <span
                     dir="ltr"
                     className={cn(
-                      'rounded-md border px-2 py-0.5 text-xs font-semibold',
+                      'rounded-md border px-2.5 py-0.5 text-sm font-semibold',
                       lead.aiScore >= 70
-                        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                        ? 'border-emerald-400/45 bg-emerald-500/15 text-emerald-300'
                         : lead.aiScore >= 40
-                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
-                          : 'border-rose-500/30 bg-rose-500/10 text-rose-300',
+                          ? 'border-amber-400/45 bg-amber-500/15 text-amber-300'
+                          : 'border-rose-400/45 bg-rose-500/15 text-rose-300',
                     )}
                   >
                     {lead.aiScore}/100
                   </span>
                 )}
               </div>
-              <button
-                onClick={runAiScore}
-                disabled={pending}
-                className="inline-flex items-center gap-1.5 rounded-md border border-violet-500/30 bg-violet-500/10 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/20 disabled:opacity-60"
-              >
-                {pending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                {lead.aiScore != null ? 'إعادة التقييم' : 'تقييم الآن'}
-              </button>
+              {/* Scoring writes back to the lead, so it is a mutation too. */}
+              {canWrite && (
+                <button
+                  onClick={runAiScore}
+                  disabled={pending}
+                  className="inline-flex items-center gap-2 rounded-md border border-violet-400/45 bg-violet-500/15 px-4 text-sm font-medium text-violet-200 hover:bg-violet-500/25 disabled:opacity-60 ring-focus"
+                >
+                  {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  {lead.aiScore != null ? 'إعادة التقييم' : 'تقييم الآن'}
+                </button>
+              )}
             </div>
             {lead.aiQualification && (
-              <p className="mt-2 text-sm text-ink-200 whitespace-pre-wrap">{lead.aiQualification}</p>
+              <p className="mt-2.5 text-base text-ink-100 whitespace-pre-wrap">{lead.aiQualification}</p>
             )}
           </div>
 
           {lead.notes && (
-            <div className="mt-4 rounded-md border border-white/[0.06] bg-white/[0.02] p-3 text-sm text-ink-200 whitespace-pre-wrap">
+            <div className="mt-5 rounded-md border border-white/[0.18] bg-ink-760 p-4 text-base text-ink-100 whitespace-pre-wrap">
               {lead.notes}
             </div>
           )}
         </div>
 
         {/* Next actions — free-text reminders pinned to this client */}
-        <NextActionsBlock leadId={lead.id} initial={lead.nextActions ?? []} />
+        <NextActionsBlock leadId={lead.id} initial={lead.nextActions ?? []} canWrite={canWrite} />
 
-        <div className="surface-strong p-5">
-          <div className="text-sm font-medium text-white mb-3">تسجيل نشاط</div>
-          <form onSubmit={logActivity} className="space-y-3">
-            <div className="flex flex-wrap gap-2">
-              {(Object.keys(ACTIVITY_LABELS_AR) as ActivityType[]).map((t) => (
-                <button
-                  type="button"
-                  key={t}
-                  onClick={() => setActType(t)}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs',
-                    actType === t
-                      ? 'border-white/25 bg-white/[0.08] text-white'
-                      : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
-                  )}
-                >
-                  {t === 'WHATSAPP' && <MessageSquare className="h-3 w-3" />}
-                  {t === 'PHONE_CALL' && <Phone className="h-3 w-3" />}
-                  {ACTIVITY_LABELS_AR[t]}
-                </button>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input
-                value={actOutcome}
-                onChange={(e) => setActOutcome(e.target.value)}
-                placeholder="النتيجة (رد / لم يرد / تم الشرح ...)"
-                className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
-              />
-              <input
-                value={actNote}
-                onChange={(e) => setActNote(e.target.value)}
-                placeholder="ملاحظة"
-                className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100"
-              />
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={pending}
-                className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-3 py-2 text-sm font-medium hover:bg-ink-100 disabled:opacity-60"
-              >
-                {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                تسجيل
-              </button>
-            </div>
-          </form>
+        <div className="surface-strong h-fit p-5 md:p-6">
+          {canWrite && (
+            <>
+              <div className="text-base font-semibold text-white mb-3">تسجيل نشاط</div>
+              <form onSubmit={logActivity} className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {(Object.keys(ACTIVITY_LABELS_AR) as ActivityType[]).map((t) => (
+                    <button
+                      type="button"
+                      key={t}
+                      onClick={() => setActType(t)}
+                      className={cn(
+                        'inline-flex items-center gap-2 rounded-md border px-4 text-sm font-medium ring-focus',
+                        actType === t
+                          ? 'border-emerald-400/60 bg-emerald-500/20 text-white'
+                          : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
+                      )}
+                    >
+                      {t === 'WHATSAPP' && <MessageSquare className="h-4 w-4" />}
+                      {t === 'PHONE_CALL' && <Phone className="h-4 w-4" />}
+                      {ACTIVITY_LABELS_AR[t]}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="block">
+                    <span className="form-label">النتيجة</span>
+                    <input
+                      value={actOutcome}
+                      onChange={(e) => setActOutcome(e.target.value)}
+                      placeholder="رد / لم يرد / تم الشرح …"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="form-label">ملاحظة</span>
+                    <input
+                      value={actNote}
+                      onChange={(e) => setActNote(e.target.value)}
+                      placeholder="تفاصيل إضافية"
+                    />
+                  </label>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={pending}
+                    className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 disabled:opacity-60 ring-focus"
+                  >
+                    {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
+                    تسجيل
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
 
-          <div className="mt-5">
-            <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">الجدول الزمني</div>
-            <ul className="space-y-2">
+          {/* The timeline is history, not a mutation — it stays for a viewer. */}
+          <div className={canWrite ? 'mt-6' : ''}>
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">الجدول الزمني</div>
+            <ul className="space-y-2.5">
               {(lead.activities ?? []).map((a) => (
-                <li key={a.id} className="rounded-md border border-white/[0.06] bg-white/[0.015] p-3">
-                  <div className="flex items-center justify-between text-xs text-ink-400">
+                <li key={a.id} className="rounded-md border border-white/[0.18] bg-ink-760 p-3.5">
+                  <div className="flex items-center justify-between gap-2 text-sm text-ink-300">
                     <span>{ACTIVITY_LABELS_AR[a.type]}</span>
                     <span className="ltr-inline">{new Date(a.occurredAt).toLocaleString('en-GB', { hour12: true })}</span>
                   </div>
-                  {a.outcome && <div className="text-sm text-white mt-1">{a.outcome}</div>}
-                  {a.note && <div className="text-sm text-ink-300 mt-1 whitespace-pre-wrap">{a.note}</div>}
-                  {a.actorName && <div className="text-[11px] text-ink-500 mt-1">{a.actorName}</div>}
+                  {a.outcome && <div className="text-base text-white mt-1">{a.outcome}</div>}
+                  {a.note && <div className="text-base text-ink-200 mt-1 whitespace-pre-wrap">{a.note}</div>}
+                  {a.actorName && <div className="text-sm text-ink-300 mt-1">{a.actorName}</div>}
                 </li>
               ))}
               {(!lead.activities || lead.activities.length === 0) && (
-                <li className="text-sm text-ink-500 text-center py-6">لا يوجد نشاط بعد</li>
+                <li className="text-base text-ink-300 text-center py-6">لا يوجد نشاط بعد</li>
               )}
             </ul>
           </div>
         </div>
       </div>
 
-      <aside className="space-y-4">
-        <div className="surface-strong p-4">
-          <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">تغيير المرحلة</div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {ALL_STAGES.map((s) => (
-              <button
-                key={s}
-                onClick={() => changeStage(s)}
-                disabled={pending || s === lead.stage}
-                className={cn(
-                  'inline-flex items-center justify-between gap-1 rounded-md border px-2 py-1.5 text-xs',
-                  s === lead.stage
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
-                    : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
-                )}
-              >
-                <span>{STAGE_LABELS_AR[s]}</span>
-                {s === lead.stage && <ArrowRight className="h-3 w-3" />}
-              </button>
-            ))}
+      <aside className="space-y-5">
+        {/* Both pickers are pure mutation surfaces — the current stage and type
+            are already on the card above, so a viewer loses nothing. */}
+        {canWrite && (
+          <div className="surface-strong h-fit p-4 md:p-5">
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">تغيير المرحلة</div>
+            <div className="grid grid-cols-2 gap-2">
+              {ALL_STAGES.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => changeStage(s)}
+                  disabled={pending || s === lead.stage}
+                  className={cn(
+                    'inline-flex items-center justify-between gap-1 rounded-md border px-3 text-sm font-medium ring-focus',
+                    s === lead.stage
+                      ? 'border-emerald-400/60 bg-emerald-500/20 text-emerald-200'
+                      : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
+                  )}
+                >
+                  <span>{STAGE_LABELS_AR[s]}</span>
+                  {s === lead.stage && <ArrowRight className="h-4 w-4 shrink-0" />}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="surface-strong p-4">
-          <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">نوع العميل (قمع المبيعات)</div>
-          <div className="grid grid-cols-1 gap-1.5">
-            {CLIENT_TYPE_ORDER.map((t) => (
-              <button
-                key={t}
-                onClick={() => changeClientType(t)}
-                disabled={pending || t === lead.clientType}
-                className={cn(
-                  'inline-flex items-center justify-between gap-1 rounded-md border px-2 py-1.5 text-xs',
-                  t === lead.clientType
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
-                    : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
-                )}
-              >
-                <span>{CLIENT_TYPE_LABELS_AR[t]}</span>
-                {t === lead.clientType && <ArrowRight className="h-3 w-3" />}
-              </button>
-            ))}
+        {canWrite && (
+          <div className="surface-strong h-fit p-4 md:p-5">
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">نوع العميل (قمع المبيعات)</div>
+            <div className="grid grid-cols-1 gap-2">
+              {CLIENT_TYPE_ORDER.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => changeClientType(t)}
+                  disabled={pending || t === lead.clientType}
+                  className={cn(
+                    'inline-flex items-center justify-between gap-1 rounded-md border px-3 text-sm font-medium ring-focus',
+                    t === lead.clientType
+                      ? 'border-emerald-400/60 bg-emerald-500/20 text-emerald-200'
+                      : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
+                  )}
+                >
+                  <span>{CLIENT_TYPE_LABELS_AR[t]}</span>
+                  {t === lead.clientType && <ArrowRight className="h-4 w-4 shrink-0" />}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {lead.booking && (
-          <div className="surface p-4">
-            <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">اجتماع مسجل</div>
-            <div className="text-sm text-white ltr-inline">
+          <div className="surface h-fit p-4 md:p-5">
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2">اجتماع مسجل</div>
+            <div className="text-base text-white ltr-inline">
               {new Date(lead.booking.scheduledAt).toLocaleString('en-GB', { hour12: true })}
             </div>
-            <div className="text-xs text-ink-400 mt-1">
+            <div className="text-sm text-ink-300 mt-1">
               {lead.booking.calendarType} · {lead.booking.status}
             </div>
           </div>
         )}
 
-        <div className="surface p-4">
-          <div className="text-xs uppercase tracking-wider text-ink-400 mb-2">سجل الأحداث</div>
-          <ul className="space-y-1.5 text-xs">
+        <div className="surface h-fit p-4 md:p-5">
+          <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">سجل الأحداث</div>
+          <ul className="space-y-2.5 text-sm">
             {(lead.events ?? []).slice().reverse().slice(0, 15).map((ev) => (
               <li key={ev.id} className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-ink-200">{ev.type}</div>
-                  {ev.detail && <div className="text-ink-500">{ev.detail}</div>}
-                  {ev.actorName && <div className="text-ink-500">{ev.actorName}</div>}
+                <div className="min-w-0">
+                  <div className="text-ink-100">{ev.type}</div>
+                  {ev.detail && <div className="text-ink-300">{ev.detail}</div>}
+                  {ev.actorName && <div className="text-ink-300">{ev.actorName}</div>}
                 </div>
-                <span className="text-ink-500 ltr-inline shrink-0">
+                <span className="text-ink-300 ltr-inline shrink-0">
                   {new Date(ev.createdAt).toLocaleDateString('en-GB')}
                 </span>
               </li>
@@ -514,9 +556,9 @@ export function LeadDetailClient({ lead: initial, user }: { lead: Lead; user: Au
 
 function Detail({ label, value, ltr }: { label: string; value: string | null | undefined; ltr?: boolean }) {
   return (
-    <div>
-      <div className="text-[11px] text-ink-500">{label}</div>
-      <div className={cn('text-white', ltr && 'ltr-inline')}>{fmt(value)}</div>
+    <div className="min-w-0">
+      <div className="text-sm font-medium text-ink-300">{label}</div>
+      <div className={cn('text-white break-words', ltr && 'ltr-inline')}>{fmt(value)}</div>
     </div>
   );
 }

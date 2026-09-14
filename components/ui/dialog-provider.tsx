@@ -31,14 +31,14 @@ interface OpenState {
 }
 
 const TONE_BADGE: Record<Tone, { icon: typeof Info; color: string; bg: string; border: string }> = {
-  default: { icon: Info, color: '#A3A3A3', bg: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.12)' },
-  info: { icon: Info, color: '#60A5FA', bg: 'rgba(96,165,250,0.10)', border: 'rgba(96,165,250,0.30)' },
-  warn: { icon: AlertTriangle, color: '#F59E0B', bg: 'rgba(245,158,11,0.10)', border: 'rgba(245,158,11,0.30)' },
-  danger: { icon: AlertTriangle, color: '#EF4444', bg: 'rgba(239,68,68,0.10)', border: 'rgba(239,68,68,0.30)' },
-  success: { icon: CheckCircle2, color: '#10B981', bg: 'rgba(16,185,129,0.10)', border: 'rgba(16,185,129,0.30)' },
+  default: { icon: Info, color: '#D4D4D4', bg: 'rgba(255,255,255,0.10)', border: 'rgba(255,255,255,0.22)' },
+  info: { icon: Info, color: '#93C5FD', bg: 'rgba(96,165,250,0.16)', border: 'rgba(96,165,250,0.45)' },
+  warn: { icon: AlertTriangle, color: '#FCD34D', bg: 'rgba(245,158,11,0.16)', border: 'rgba(245,158,11,0.45)' },
+  danger: { icon: AlertTriangle, color: '#FCA5A5', bg: 'rgba(239,68,68,0.16)', border: 'rgba(239,68,68,0.45)' },
+  success: { icon: CheckCircle2, color: '#34D399', bg: 'rgba(16,185,129,0.16)', border: 'rgba(16,185,129,0.45)' },
 };
 const TONE_BUTTON: Record<Tone, string> = {
-  default: 'bg-white text-ink-900 hover:bg-ink-100',
+  default: 'bg-white text-ink-900 hover:bg-ink-200',
   info: 'bg-blue-500 text-white hover:bg-blue-400',
   warn: 'bg-amber-500 text-ink-900 hover:bg-amber-400',
   danger: 'bg-rose-500 text-white hover:bg-rose-400',
@@ -94,27 +94,27 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
       {state && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" role="dialog" aria-modal="true"
           onClick={(e) => { if (e.target === e.currentTarget) close(false); }}>
-          <div className="absolute inset-0 bg-ink-900/80 backdrop-blur-sm" />
-          <div className="relative w-full max-w-md rounded-xl border border-white/10 bg-ink-800 shadow-2xl">
+          <div className="absolute inset-0 bg-black/75" />
+          <div className="relative w-full max-w-md rounded-xl border border-white/20 bg-ink-775 shadow-2xl">
             <button type="button" onClick={() => close(false)}
-              className="absolute left-3 top-3 rounded-md p-1.5 text-ink-400 hover:bg-white/[0.06] hover:text-white"
-              aria-label="Close">
-              <X className="h-4 w-4" />
+              className="tap-box absolute left-2 top-2 rounded-md text-ink-300 hover:bg-white/[0.10] hover:text-white ring-focus"
+              aria-label="إغلاق">
+              <X className="h-5 w-5" />
             </button>
-            <div className="p-5">
+            <div className="p-5 pt-6">
               <ToneIcon tone={state.tone} />
-              <h3 className="mt-3 text-base font-semibold text-white">{state.title}</h3>
-              {state.message && <p className="mt-1.5 text-sm text-ink-300 whitespace-pre-wrap">{state.message}</p>}
+              <h3 className="mt-3 text-lg font-semibold text-white">{state.title}</h3>
+              {state.message && <p className="mt-2 text-base text-ink-200 whitespace-pre-wrap">{state.message}</p>}
             </div>
-            <div className="flex items-center justify-start gap-2 px-5 py-4 border-t border-white/[0.06]">
+            <div className="flex items-center justify-start gap-2 px-5 py-4 border-t border-white/10">
               {state.kind === 'confirm' && (
                 <button type="button" onClick={() => close(false)}
-                  className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-ink-200 hover:bg-white/[0.05]">
+                  className="inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] ring-focus">
                   {state.cancelLabel}
                 </button>
               )}
               <button type="button" onClick={() => close(true)} autoFocus
-                className={`inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-sm font-medium ring-focus ${TONE_BUTTON[state.tone]}`}>
+                className={`inline-flex items-center gap-2 rounded-md px-5 text-sm font-semibold ring-focus ${TONE_BUTTON[state.tone]}`}>
                 {state.confirmLabel}
               </button>
             </div>
@@ -129,9 +129,9 @@ function ToneIcon({ tone }: { tone: Tone }) {
   const b = TONE_BADGE[tone];
   const Icon = b.icon;
   return (
-    <div className="inline-flex h-9 w-9 items-center justify-center rounded-full"
+    <div className="inline-flex h-10 w-10 items-center justify-center rounded-full"
       style={{ background: b.bg, border: `1px solid ${b.border}` }}>
-      <Icon className="h-4 w-4" style={{ color: b.color }} />
+      <Icon className="h-5 w-5" style={{ color: b.color }} />
     </div>
   );
 }

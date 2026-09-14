@@ -47,11 +47,12 @@ export function WhatsAppButton({ phone, clientName, repName, className, iconOnly
       rel="noopener noreferrer"
       title="فتح واتساب"
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1.5 text-xs text-emerald-300 hover:bg-emerald-500/20 transition-colors',
+        'inline-flex items-center justify-center gap-2 rounded-md border border-emerald-400/45 bg-emerald-500/15 text-sm font-medium text-emerald-300 hover:bg-emerald-500/25 transition-colors ring-focus',
+        iconOnly ? 'tap-box' : 'tap px-4',
         className,
       )}
     >
-      <MessageCircle className="h-3.5 w-3.5" />
+      <MessageCircle className="h-5 w-5" />
       {!iconOnly && 'واتساب'}
     </a>
   );

@@ -46,43 +46,42 @@ export function TargetsClient({ targets, team }: { targets: SalesTarget[]; team:
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-4">
-      <form onSubmit={submit} className="surface-strong p-4 space-y-3">
-        <div className="text-sm font-medium text-white">إضافة / تعديل هدف</div>
-        <label className="block text-xs text-ink-300">
-          المندوب
-          <select value={repId} onChange={(e) => setRepId(e.target.value)} className="block w-full mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100">
+    <div className="grid grid-cols-1 xl:grid-cols-[440px_1fr] gap-5">
+      <form onSubmit={submit} className="surface-strong h-fit p-5 md:p-6 space-y-4">
+        <div className="text-base font-semibold text-white">إضافة / تعديل هدف</div>
+        <label className="block">
+          <span className="form-label">المندوب</span>
+          <select value={repId} onChange={(e) => setRepId(e.target.value)}>
             <option value="">— اختر —</option>
             {team.map((m) => (
               <option key={m.id} value={m.id}>{m.name ?? m.email}</option>
             ))}
           </select>
         </label>
-        <label className="block text-xs text-ink-300">
-          الشهر (YYYY-MM)
-          <input dir="ltr" value={month} onChange={(e) => setMonth(e.target.value)} placeholder="2026-07"
-            className="block w-full mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100 ltr-inline" />
+        <label className="block">
+          <span className="form-label">الشهر (YYYY-MM)</span>
+          <input dir="ltr" value={month} onChange={(e) => setMonth(e.target.value)} placeholder="2026-07" />
         </label>
-        <label className="block text-xs text-ink-300">
-          هدف الإيراد (ريال)
-          <input dir="ltr" type="number" min={0} value={revenue} onChange={(e) => setRevenue(e.target.value)}
-            className="block w-full mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100 ltr-inline" />
+        <label className="block">
+          <span className="form-label">هدف الإيراد (ريال)</span>
+          <input dir="ltr" type="number" min={0} inputMode="numeric" value={revenue}
+            onChange={(e) => setRevenue(e.target.value)} />
         </label>
-        <label className="block text-xs text-ink-300">
-          عدد الصفقات (اختياري)
-          <input dir="ltr" type="number" min={0} value={count} onChange={(e) => setCount(e.target.value)}
-            className="block w-full mt-1 rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-100 ltr-inline" />
+        <label className="block">
+          <span className="form-label">عدد الصفقات (اختياري)</span>
+          <input dir="ltr" type="number" min={0} inputMode="numeric" value={count}
+            onChange={(e) => setCount(e.target.value)} />
         </label>
         <button type="submit" disabled={pending}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-3 py-2 text-sm font-medium hover:bg-ink-100 disabled:opacity-60">
-          {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-4 text-base font-semibold hover:bg-ink-200 disabled:opacity-60 ring-focus">
+          {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
           حفظ
         </button>
       </form>
 
-      <div className="surface-strong overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
+      <div className="surface-strong h-fit overflow-x-auto">
+        <table className="w-full min-w-[560px] text-sm">
+          <thead className="text-xs uppercase tracking-wider text-ink-300 border-b border-white/10">
             <tr>
               <th className="text-start px-4 py-3">المندوب</th>
               <th className="text-start px-4 py-3">الشهر</th>
@@ -92,15 +91,15 @@ export function TargetsClient({ targets, team }: { targets: SalesTarget[]; team:
           </thead>
           <tbody>
             {list.map((t) => (
-              <tr key={t.id} className="border-b border-white/[0.04]">
+              <tr key={t.id} className="border-b border-white/10">
                 <td className="px-4 py-3 text-white">{t.rep?.name ?? t.rep?.email ?? t.repId}</td>
-                <td className="px-4 py-3 text-ink-300 ltr-inline">{t.month.slice(0, 7)}</td>
-                <td className="px-4 py-3 text-emerald-300 ltr-inline">{t.revenueTargetSar.toLocaleString('en-US')}</td>
-                <td className="px-4 py-3 text-ink-300 ltr-inline">{t.leadCountTarget ?? '—'}</td>
+                <td className="px-4 py-3 text-ink-200"><span className="ltr-inline">{t.month.slice(0, 7)}</span></td>
+                <td className="px-4 py-3 text-emerald-300"><span className="ltr-inline">{t.revenueTargetSar.toLocaleString('en-US')}</span></td>
+                <td className="px-4 py-3 text-ink-200"><span className="ltr-inline">{t.leadCountTarget ?? '—'}</span></td>
               </tr>
             ))}
             {list.length === 0 && (
-              <tr><td colSpan={4} className="text-center text-ink-500 py-8">لا توجد أهداف</td></tr>
+              <tr><td colSpan={4} className="text-center text-ink-300 py-8">لا توجد أهداف</td></tr>
             )}
           </tbody>
         </table>

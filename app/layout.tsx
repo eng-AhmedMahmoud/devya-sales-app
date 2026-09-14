@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className={sora.variable}>
-      <body className="antialiased font-sora bg-ink-900 text-ink-100" suppressHydrationWarning>
+      <body className="antialiased font-sora text-ink-100" suppressHydrationWarning>
         <DialogProvider>{children}</DialogProvider>
       </body>
     </html>

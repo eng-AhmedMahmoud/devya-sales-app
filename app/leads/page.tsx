@@ -7,6 +7,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { LeadsListClient } from '@/components/lead/leads-list-client';
 import { api, ApiError, BUDGET_LABELS_AR, CLIENT_TYPE_LABELS_AR, SOURCE_LABELS_AR, STAGE_LABELS_AR } from '@/lib/api';
 import type { LeadStage, LeadSource, BudgetBucket, ClientType } from '@/lib/types';
+import { isManagerRole } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,7 +56,7 @@ export default async function LeadsListPage({
   };
 
   return (
-    <Shell>
+    <Shell isManager={isManagerRole(user.role)}>
       <PageHeader
         title="قائمة العملاء"
         subtitle={`${total} عميل`}
@@ -63,78 +64,58 @@ export default async function LeadsListPage({
           <div className="flex items-center gap-2">
             <a
               href={api.exportUrl({ stage: sp.stage, clientType: sp.clientType, source: sp.source, budget: sp.budget, q: sp.q })}
-              className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm text-ink-200 hover:bg-white/5"
+              className="tap inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] hover:border-white/30 ring-focus"
             >
-              <Download className="h-3.5 w-3.5" />
+              <Download className="h-4 w-4" />
               تصدير XLSX
             </a>
             <Link
               href="/leads/new"
-              className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-3 py-1.5 text-sm font-medium hover:bg-ink-100"
+              className="tap inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-4 text-sm font-semibold hover:bg-ink-200 ring-focus"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-5 w-5" />
               إضافة
             </Link>
           </div>
         }
       />
 
-      <form className="surface-strong p-4 mb-4 flex flex-wrap items-end gap-x-4 gap-y-3">
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
-          بحث
-          <input
-            name="q"
-            defaultValue={sp.q ?? ''}
-            placeholder="اسم / شركة / رقم"
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 w-56 focus:outline-none focus:border-white/25 focus:ring-2 focus:ring-white/10"
-          />
+      {/* Filters stack on a phone, two-up on a tablet, one row on a desktop. */}
+      <form className="surface-strong h-fit p-4 md:p-5 mb-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 items-end">
+        <label className="block">
+          <span className="form-label">بحث</span>
+          <input name="q" defaultValue={sp.q ?? ''} placeholder="اسم / شركة / رقم" />
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
-          المرحلة
-          <select
-            name="stage"
-            defaultValue={sp.stage ?? ''}
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
-          >
+        <label className="block">
+          <span className="form-label">المرحلة</span>
+          <select name="stage" defaultValue={sp.stage ?? ''}>
             <option value="">الكل</option>
             {Object.entries(STAGE_LABELS_AR).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
-          نوع العميل
-          <select
-            name="clientType"
-            defaultValue={sp.clientType ?? ''}
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
-          >
+        <label className="block">
+          <span className="form-label">نوع العميل</span>
+          <select name="clientType" defaultValue={sp.clientType ?? ''}>
             <option value="">الكل</option>
             {Object.entries(CLIENT_TYPE_LABELS_AR).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
-          المصدر
-          <select
-            name="source"
-            defaultValue={sp.source ?? ''}
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
-          >
+        <label className="block">
+          <span className="form-label">المصدر</span>
+          <select name="source" defaultValue={sp.source ?? ''}>
             <option value="">الكل</option>
             {Object.entries(SOURCE_LABELS_AR).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-300">
-          الميزانية
-          <select
-            name="budget"
-            defaultValue={sp.budget ?? ''}
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-ink-100 min-w-[10rem]"
-          >
+        <label className="block">
+          <span className="form-label">الميزانية</span>
+          <select name="budget" defaultValue={sp.budget ?? ''}>
             <option value="">الكل</option>
             {Object.entries(BUDGET_LABELS_AR).map(([k, v]) => (
               <option key={k} value={k}>{v}</option>
@@ -143,7 +124,7 @@ export default async function LeadsListPage({
         </label>
         <button
           type="submit"
-          className="rounded-lg bg-white text-ink-900 px-4 py-2.5 text-sm font-medium hover:bg-ink-100"
+          className="sm:col-span-2 xl:col-span-5 xl:justify-self-start rounded-md bg-white text-ink-900 px-6 text-sm font-semibold hover:bg-ink-200 ring-focus"
         >
           تصفية
         </button>
@@ -157,33 +138,33 @@ export default async function LeadsListPage({
       />
 
       {pageCount > 1 && (
-        <div className="mt-4 flex items-center justify-between gap-2 text-sm">
+        <div className="mt-5 flex items-center justify-between gap-2 text-sm">
           {page > 1 ? (
             <Link
               href={pageHref(page - 1)}
-              className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-ink-200 hover:bg-white/5"
+              className="tap inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
             >
               السابق
             </Link>
           ) : (
-            <span className="inline-flex items-center rounded-md border border-white/5 px-3 py-1.5 text-ink-600">
+            <span className="tap inline-flex items-center rounded-md border border-white/10 px-4 text-ink-450">
               السابق
             </span>
           )}
 
-          <span className="text-ink-400">
+          <span className="text-ink-300">
             صفحة {page} من {pageCount}
           </span>
 
           {page < pageCount ? (
             <Link
               href={pageHref(page + 1)}
-              className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-3 py-1.5 text-ink-200 hover:bg-white/5"
+              className="tap inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
             >
               التالي
             </Link>
           ) : (
-            <span className="inline-flex items-center rounded-md border border-white/5 px-3 py-1.5 text-ink-600">
+            <span className="tap inline-flex items-center rounded-md border border-white/10 px-4 text-ink-450">
               التالي
             </span>
           )}

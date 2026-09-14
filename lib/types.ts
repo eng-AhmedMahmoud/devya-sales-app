@@ -192,3 +192,38 @@ export interface TeamMember {
   email: string;
   role: UserRole;
 }
+
+// ─── Cross-rep visibility ───────────────────────────────────────────────────
+// One backend mechanism, two scopes; this app only ever administers SALES.
+
+export type RepVisibilityScope = 'SALES' | 'OUTDOOR';
+
+export interface RepVisibilityGrant {
+  id: string;
+  scope: RepVisibilityScope;
+  granteeId: string;
+  /** null = «كل المندوبين» — a wildcard over the whole scope. */
+  targetRepId: string | null;
+  grantedById: string;
+  note: string | null;
+  createdAt: string;
+  revokedAt: string | null;
+  revokedById: string | null;
+  granteeName: string | null;
+  targetRepName: string | null;
+  grantedByName: string | null;
+  revokedByName: string | null;
+}
+
+export interface RepVisibilityRow {
+  rep: { id: string; name: string | null; email: string; role: UserRole };
+  isManager: boolean;
+  /** Manager by role, or holder of a wildcard grant. */
+  seesAll: boolean;
+  grants: RepVisibilityGrant[];
+}
+
+export interface RepVisibilityOverview {
+  scope: RepVisibilityScope;
+  reps: RepVisibilityRow[];
+}

@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { useSyncExternalStore, useTransition } from 'react';
 import {
   BarChart3,
   CalendarDays,
+  Eye,
   ExternalLink,
   FileSignature,
   History,
@@ -13,6 +14,8 @@ import {
   ListChecks,
   Loader2,
   LogOut,
+  PanelRightClose,
+  PanelRightOpen,
   Target,
   Upload,
   UserPlus,
@@ -38,6 +41,7 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/history', label: 'السجل', icon: History },
   { href: '/targets', label: 'الأهداف', icon: Target, managerOnly: true },
   { href: '/import', label: 'استيراد', icon: Upload, managerOnly: true },
+  { href: '/visibility', label: 'صلاحيات الرؤية', icon: Eye, managerOnly: true },
 ];
 
 const TOOL_NAV: { href: string; label: string; icon: React.ComponentType<{ className?: string }>; sub: string }[] = [
@@ -46,10 +50,41 @@ const TOOL_NAV: { href: string; label: string; icon: React.ComponentType<{ class
   ...(appConfig.adminUrl ? [{ href: appConfig.adminUrl, label: 'الإدارة', icon: CalendarDays, sub: 'الحجوزات والمحتوى' }] : []),
 ];
 
+// Collapsed state is persisted so an iPad keeps the icon rail between visits.
+// localStorage is an external store: SSR gets the "expanded" snapshot and the
+// client re-reads it after hydration, so there is no markup mismatch.
+const COLLAPSE_KEY = 'devya-sales-sidebar-collapsed';
+const collapseListeners = new Set<() => void>();
+
+function subscribeCollapsed(onChange: () => void) {
+  collapseListeners.add(onChange);
+  window.addEventListener('storage', onChange);
+  return () => {
+    collapseListeners.delete(onChange);
+    window.removeEventListener('storage', onChange);
+  };
+}
+
+function readCollapsed() {
+  try {
+    return window.localStorage.getItem(COLLAPSE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function writeCollapsed(next: boolean) {
+  try {
+    window.localStorage.setItem(COLLAPSE_KEY, next ? '1' : '0');
+  } catch {}
+  collapseListeners.forEach((notify) => notify());
+}
+
 export function Sidebar({ isManager }: { isManager?: boolean } = {}) {
   const pathname = usePathname();
   const router = useRouter();
   const [pending, start] = useTransition();
+  const collapsed = useSyncExternalStore(subscribeCollapsed, readCollapsed, () => false);
 
   function handleLogout() {
     start(async () => {
@@ -65,32 +100,58 @@ export function Sidebar({ isManager }: { isManager?: boolean } = {}) {
   const items = PRIMARY_NAV.filter((i) => !i.managerOnly || isManager);
 
   return (
-    <aside className="hidden lg:flex w-64 shrink-0 flex-col border-l border-white/5 bg-ink-950/60 backdrop-blur-md">
-      <div className="px-5 py-5 flex items-center gap-2 border-b border-white/5">
-        <DevyaLogo width={96} />
-        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 text-[10px] uppercase tracking-wider text-ink-300">
-          Sales
-        </span>
+    <aside
+      className={cn(
+        'hidden lg:flex shrink-0 flex-col border-l border-white/10 bg-ink-825',
+        collapsed ? 'w-[72px]' : 'w-60 xl:w-64',
+      )}
+    >
+      <div
+        className={cn(
+          'px-3 py-4 flex items-center gap-2 border-b border-white/10',
+          collapsed ? 'justify-center' : 'justify-between',
+        )}
+      >
+        {!collapsed && (
+          <div className="flex items-center gap-2 min-w-0">
+            <DevyaLogo width={96} />
+            <span className="chip">Sales</span>
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={() => writeCollapsed(!collapsed)}
+          title={collapsed ? 'توسيع القائمة' : 'طي القائمة'}
+          aria-label={collapsed ? 'توسيع القائمة' : 'طي القائمة'}
+          aria-expanded={!collapsed}
+          className="tap-box rounded-md text-ink-300 hover:text-white hover:bg-white/[0.08] transition-colors ring-focus"
+        >
+          {collapsed ? <PanelRightOpen className="h-5 w-5" /> : <PanelRightClose className="h-5 w-5" />}
+        </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-5 space-y-6">
+      <nav className={cn('flex-1 overflow-y-auto py-4 space-y-5', collapsed ? 'px-2' : 'px-3')}>
         <div>
-          <div className="px-2 mb-2 text-[10px] uppercase tracking-wider text-ink-500 font-medium">
-            المساحة
-          </div>
-          <ul className="space-y-0.5">
+          {!collapsed && (
+            <div className="px-2 mb-2 text-xs uppercase tracking-wider text-ink-300 font-semibold">
+              المساحة
+            </div>
+          )}
+          <ul className="space-y-1">
             {items.map((item) => (
-              <NavLink key={item.label} item={item} active={isActive(item)} />
+              <NavLink key={item.label} item={item} active={isActive(item)} collapsed={collapsed} />
             ))}
           </ul>
         </div>
 
         {TOOL_NAV.length > 0 && (
           <div>
-            <div className="px-2 mb-2 text-[10px] uppercase tracking-wider text-ink-500 font-medium">
-              أدوات
-            </div>
-            <ul className="space-y-0.5">
+            {!collapsed && (
+              <div className="px-2 mb-2 text-xs uppercase tracking-wider text-ink-300 font-semibold">
+                أدوات
+              </div>
+            )}
+            <ul className="space-y-1">
               {TOOL_NAV.map((t) => {
                 const Icon = t.icon;
                 return (
@@ -99,13 +160,17 @@ export function Sidebar({ isManager }: { isManager?: boolean } = {}) {
                       href={t.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center justify-between gap-2.5 rounded-md px-2.5 py-2 text-sm text-ink-200 hover:text-white hover:bg-white/[0.03] border border-transparent transition-colors ring-focus group"
+                      title={t.label}
+                      className={cn(
+                        'tap flex items-center gap-2.5 rounded-md text-sm text-ink-200 hover:text-white hover:bg-white/[0.08] border border-transparent transition-colors ring-focus group',
+                        collapsed ? 'justify-center px-0' : 'justify-between px-3',
+                      )}
                     >
                       <span className="flex items-center gap-2.5 min-w-0">
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="truncate">{t.label}</span>
+                        <Icon className="h-5 w-5 shrink-0" />
+                        {!collapsed && <span className="truncate">{t.label}</span>}
                       </span>
-                      <ExternalLink className="h-3 w-3 text-ink-500 group-hover:text-white shrink-0" />
+                      {!collapsed && <ExternalLink className="h-4 w-4 text-ink-300 group-hover:text-white shrink-0" />}
                     </a>
                   </li>
                 );
@@ -115,35 +180,38 @@ export function Sidebar({ isManager }: { isManager?: boolean } = {}) {
         )}
       </nav>
 
-      <div className="px-3 pb-3 space-y-2">
+      <div className={cn('pb-3', collapsed ? 'px-2' : 'px-3')}>
         <button
           onClick={handleLogout}
           disabled={pending}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-3 py-2 text-sm text-ink-200 hover:bg-white/5 hover:border-white/20 transition-colors disabled:opacity-60"
+          title="تسجيل الخروج"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-3 text-sm font-medium text-ink-100 hover:bg-white/[0.12] hover:border-white/30 transition-colors disabled:opacity-60 ring-focus"
         >
-          {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
-          تسجيل الخروج
+          {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogOut className="h-5 w-5" />}
+          {!collapsed && 'تسجيل الخروج'}
         </button>
       </div>
     </aside>
   );
 }
 
-function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+function NavLink({ item, active, collapsed }: { item: NavItem; active: boolean; collapsed: boolean }) {
   const Icon = item.icon;
   return (
     <li>
       <Link
         href={item.href}
+        title={item.label}
         className={cn(
-          'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors ring-focus',
+          'tap flex items-center gap-2.5 rounded-md text-sm font-medium transition-colors ring-focus',
+          collapsed ? 'justify-center px-0' : 'px-3',
           active
-            ? 'bg-white/[0.06] text-white border border-white/10'
-            : 'text-ink-200 hover:text-white hover:bg-white/[0.03] border border-transparent',
+            ? 'bg-white/[0.12] text-white border border-white/25'
+            : 'text-ink-200 hover:text-white hover:bg-white/[0.08] border border-transparent',
         )}
       >
-        <Icon className="h-4 w-4 shrink-0" />
-        <span className="truncate">{item.label}</span>
+        <Icon className="h-5 w-5 shrink-0" />
+        {!collapsed && <span className="truncate">{item.label}</span>}
       </Link>
     </li>
   );

@@ -13,14 +13,32 @@ import type {
   LeadStage,
   PipelineOutcome,
   RepLeaderboardEntry,
+  RepVisibilityGrant,
+  RepVisibilityOverview,
+  RepVisibilityScope,
   SalesTarget,
   TeamMember,
+  UserRole,
 } from './types';
 
 export class ApiError extends Error {
   constructor(public status: number, public body: unknown, message: string) {
     super(message);
   }
+}
+
+/**
+ * The API answers in English (`Not your lead`, `Lead not found`). Putting that
+ * raw string inside an Arabic dialog reads as a bug, so the statuses a rep can
+ * actually trigger get MSA copy and everything else falls back to the body.
+ */
+export function errorMessageAr(err: unknown): string {
+  if (err instanceof ApiError) {
+    if (err.status === 401) return 'انتهت الجلسة. سجّل الدخول مرة أخرى.';
+    if (err.status === 403) return 'لا تملك صلاحية التعديل على هذا العميل — الاطلاع فقط.';
+    if (err.status === 404) return 'لم يعد هذا العميل موجوداً.';
+  }
+  return err instanceof Error ? err.message : 'حدث خطأ غير متوقع.';
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit & { cookieHeader?: string }): Promise<T> {
@@ -233,6 +251,38 @@ export const api = {
       }),
   },
 
+  // Manager-only. `reps` carries the whole admin screen: every rep that owns a
+  // book plus the live grants pointing out of it.
+  visibility: {
+    reps: (scope: RepVisibilityScope, cookieHeader?: string) =>
+      apiFetch<RepVisibilityOverview>(`/api/admin/visibility/reps${qs({ scope })}`, { cookieHeader }),
+    grants: (
+      params: { scope?: RepVisibilityScope; includeRevoked?: boolean } = {},
+      cookieHeader?: string,
+    ) =>
+      apiFetch<RepVisibilityGrant[]>(
+        `/api/admin/visibility/grants${qs({
+          scope: params.scope,
+          includeRevoked: params.includeRevoked ? 'true' : undefined,
+        })}`,
+        { cookieHeader },
+      ),
+    // `targetRepId: null` grants sight of every rep in the scope.
+    grant: (body: {
+      scope: RepVisibilityScope;
+      granteeId: string;
+      targetRepId?: string | null;
+      note?: string;
+    }) =>
+      apiFetch<RepVisibilityGrant>('/api/admin/visibility/grants', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    // Revoke, not delete — the backend keeps the row for the trail.
+    revoke: (id: string) =>
+      apiFetch<RepVisibilityGrant>(`/api/admin/visibility/grants/${id}`, { method: 'DELETE' }),
+  },
+
   reports: {
     funnel: (cookieHeader?: string) =>
       apiFetch<FunnelBucket[]>('/api/admin/sales/reports/funnel', { cookieHeader }),
@@ -325,6 +375,14 @@ export const BUDGET_LABELS_AR: Record<BudgetBucket, string> = {
   B50K_100K: '50 - 100 ألف',
   OVER_100K: 'أكثر من 100 ألف',
   UNKNOWN: 'غير محدد',
+};
+
+export const ROLE_LABELS_AR: Record<UserRole, string> = {
+  SUPER_ADMIN: 'مسؤول عام',
+  ADMIN: 'مسؤول',
+  SALES_MANAGER: 'مدير مبيعات',
+  SALES_REP: 'مندوب مبيعات',
+  TEAM: 'عضو فريق',
 };
 
 export const ACTIVITY_LABELS_AR: Record<ActivityType, string> = {

@@ -6,6 +6,7 @@ import { Shell } from '@/components/ui/shell';
 import { PageHeader } from '@/components/ui/page-header';
 import { PipelineBoard } from '@/components/pipeline/board';
 import { api, ApiError } from '@/lib/api';
+import { isManagerRole } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,21 +24,21 @@ export default async function PipelinePage() {
   const { items: leads } = await api.leads.list({ pageSize: 200 }, cookieHeader);
 
   return (
-    <Shell>
+    <Shell isManager={isManagerRole(user.role)}>
       <PageHeader
         title="قمع المبيعات"
         subtitle={`مرحباً ${user.name ?? user.email} — ${leads.length} عميل في القمع`}
         actions={
           <Link
             href="/leads/new"
-            className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-3 py-2 text-sm font-medium hover:bg-ink-100 ring-focus"
+            className="tap inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 ring-focus"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5" />
             إضافة عميل
           </Link>
         }
       />
-      <PipelineBoard leads={leads} />
+      <PipelineBoard leads={leads} viewerId={user.id} isManager={isManagerRole(user.role)} />
     </Shell>
   );
 }

@@ -75,19 +75,20 @@ export function LeadsListClient({ leads, user, team }: Props) {
 
   return (
     <>
+      {/* min-w keeps the columns readable; the wrapper scrolls on a 1024px iPad. */}
       <div className="surface-strong overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
+        <table className="w-full min-w-[1040px] text-sm">
+          <thead className="text-xs uppercase tracking-wider text-ink-300 border-b border-white/10">
             <tr>
               {bulkMode && (
-                <th className="px-3 py-3 w-8">
-                  <input
-                    type="checkbox"
-                    checked={allPageSelected}
-                    onChange={allPageSelected ? clearSelection : selectAllPage}
-                    className="accent-emerald-500 cursor-pointer"
-                    title="تحديد الكل"
-                  />
+                <th className="px-3 py-2 w-14">
+                  <label className="tap-box cursor-pointer" title="تحديد الكل">
+                    <input
+                      type="checkbox"
+                      checked={allPageSelected}
+                      onChange={allPageSelected ? clearSelection : selectAllPage}
+                    />
+                  </label>
                 </th>
               )}
               <th className="text-start px-4 py-3">الكود</th>
@@ -108,53 +109,59 @@ export function LeadsListClient({ leads, user, team }: Props) {
                 <tr
                   key={l.id}
                   className={cn(
-                    'border-b border-white/[0.04] hover:bg-white/[0.02]',
-                    isSelected && 'bg-emerald-500/[0.06]',
+                    'border-b border-white/10 hover:bg-white/[0.04]',
+                    isSelected && 'bg-emerald-500/[0.12]',
                   )}
                 >
                   {bulkMode && (
-                    <td className="px-3 py-3">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => {/* controlled by onClick */}}
-                        onClick={(e) => { e.stopPropagation(); toggleOne(l.id, idx, e.shiftKey); }}
-                        className="accent-emerald-500 cursor-pointer"
-                      />
+                    <td className="px-3 py-2">
+                      {/* 44×44 label so the whole cell area toggles, not a 16px box. */}
+                      <label className="tap-box cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            const ev = e.nativeEvent as MouseEvent;
+                            toggleOne(l.id, idx, 'shiftKey' in ev && ev.shiftKey === true);
+                          }}
+                        />
+                      </label>
                     </td>
                   )}
-                  <td className="px-4 py-3">
-                    <Link href={`/leads/${l.id}`} className="ltr-inline text-emerald-300 hover:text-white">
-                      {l.code}
+                  <td className="px-4 py-2">
+                    <Link
+                      href={`/leads/${l.id}`}
+                      className="tap inline-flex items-center font-medium text-emerald-300 hover:text-white ring-focus"
+                    >
+                      <span className="ltr-inline">{l.code}</span>
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-white">{l.clientName}</td>
                   <td className="px-4 py-3 text-ink-300">{l.companyName ?? '—'}</td>
-                  <td className="px-4 py-3 text-ink-300 ltr-inline">
-                    <div className="flex items-center gap-1.5">
-                      <span>{l.phone ?? '—'}</span>
+                  <td className="px-4 py-2 text-ink-200">
+                    <div className="flex items-center gap-2">
+                      <span className="ltr-inline">{l.phone ?? '—'}</span>
                       {l.phone && (
                         <WhatsAppButton
                           phone={l.phone}
                           clientName={l.clientName}
                           repName={repName}
                           iconOnly
-                          className="py-0.5 px-1.5"
                         />
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-ink-300">{SOURCE_LABELS_AR[l.source]}</td>
-                  <td className="px-4 py-3 text-ink-300">{BUDGET_LABELS_AR[l.budget]}</td>
-                  <td className="px-4 py-3 text-ink-300">{STAGE_LABELS_AR[l.stage]}</td>
-                  <td className="px-4 py-3 text-ink-300">{CLIENT_TYPE_LABELS_AR[l.clientType]}</td>
-                  <td className="px-4 py-3 text-ink-300">{l.assignedRepName ?? '—'}</td>
+                  <td className="px-4 py-3 text-ink-200">{SOURCE_LABELS_AR[l.source]}</td>
+                  <td className="px-4 py-3 text-ink-200">{BUDGET_LABELS_AR[l.budget]}</td>
+                  <td className="px-4 py-3 text-ink-200">{STAGE_LABELS_AR[l.stage]}</td>
+                  <td className="px-4 py-3 text-ink-200">{CLIENT_TYPE_LABELS_AR[l.clientType]}</td>
+                  <td className="px-4 py-3 text-ink-200">{l.assignedRepName ?? '—'}</td>
                 </tr>
               );
             })}
             {leads.length === 0 && (
               <tr>
-                <td colSpan={colCount} className="text-center text-ink-500 py-10">
+                <td colSpan={colCount} className="text-center text-ink-300 py-10">
                   لا توجد نتائج
                 </td>
               </tr>
@@ -182,13 +189,13 @@ export function LeadsListClient({ leads, user, team }: Props) {
         onClick={toggleBulkMode}
         title={bulkMode ? 'إلغاء وضع الدفعة' : 'وضع الدفعة'}
         className={cn(
-          'fixed bottom-6 left-6 z-20 inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium shadow-lg transition-colors',
+          'fixed bottom-6 left-6 z-20 inline-flex items-center gap-2 rounded-full px-5 text-sm font-semibold shadow-lg transition-colors ring-focus',
           bulkMode
             ? 'bg-emerald-500 text-ink-900 hover:bg-emerald-400'
-            : 'bg-ink-700 border border-white/10 text-ink-200 hover:bg-ink-600',
+            : 'bg-ink-775 border border-white/25 text-ink-100 hover:bg-ink-700',
         )}
       >
-        <Layers className="h-4 w-4" />
+        <Layers className="h-5 w-5" />
         {bulkMode ? 'إلغاء الدفعة' : 'دفعة'}
       </button>
     </>
