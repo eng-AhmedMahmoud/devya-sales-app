@@ -35,7 +35,7 @@ const TONE_BADGE: Record<Tone, { icon: typeof Info; color: string; bg: string; b
   info: { icon: Info, color: '#93C5FD', bg: 'rgba(96,165,250,0.16)', border: 'rgba(96,165,250,0.45)' },
   warn: { icon: AlertTriangle, color: '#FCD34D', bg: 'rgba(245,158,11,0.16)', border: 'rgba(245,158,11,0.45)' },
   danger: { icon: AlertTriangle, color: '#FCA5A5', bg: 'rgba(239,68,68,0.16)', border: 'rgba(239,68,68,0.45)' },
-  success: { icon: CheckCircle2, color: '#34D399', bg: 'rgba(16,185,129,0.16)', border: 'rgba(16,185,129,0.45)' },
+  success: { icon: CheckCircle2, color: '#10B981', bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.35)' },
 };
 const TONE_BUTTON: Record<Tone, string> = {
   default: 'bg-white text-ink-900 hover:bg-ink-200',
