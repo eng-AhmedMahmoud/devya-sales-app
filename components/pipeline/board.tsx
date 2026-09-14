@@ -114,7 +114,7 @@ export function PipelineBoard({
                   }}
                   onDragEnd={() => setDragging(null)}
                   className={cn(
-                    'block rounded-md border border-white/[0.18] bg-ink-760 p-3.5 hover:border-white/35 hover:bg-ink-700 active:border-emerald-400/60 transition-colors ring-focus',
+                    'block rounded-md border border-white/[0.18] bg-ink-760 p-3.5 hover:border-white/35 hover:bg-ink-700 active:border-emerald-500/40 transition-colors ring-focus',
                     dragging === lead.id && 'opacity-40',
                   )}
                 >

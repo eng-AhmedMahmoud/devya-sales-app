@@ -84,7 +84,7 @@ export function LoginForm() {
     return (
       <form onSubmit={submitCode} className="space-y-4">
         {notice && (
-          <div className="flex items-start gap-2.5 rounded-md border border-emerald-400/45 bg-emerald-500/15 px-3 py-2.5 text-sm text-emerald-200">
+          <div className="flex items-start gap-2.5 rounded-md border border-emerald-500/40 bg-emerald-500/15 px-3 py-2.5 text-sm text-emerald-200">
             <MailCheck className="h-4 w-4 mt-0.5 shrink-0" />
             <span>{notice}</span>
           </div>

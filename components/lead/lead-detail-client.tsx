@@ -353,7 +353,7 @@ export function LeadDetailClient({
                     className={cn(
                       'rounded-md border px-2.5 py-0.5 text-sm font-semibold',
                       lead.aiScore >= 70
-                        ? 'border-emerald-400/45 bg-emerald-500/15 text-emerald-300'
+                        ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
                         : lead.aiScore >= 40
                           ? 'border-amber-400/45 bg-amber-500/15 text-amber-300'
                           : 'border-rose-400/45 bg-rose-500/15 text-rose-300',
@@ -404,7 +404,7 @@ export function LeadDetailClient({
                       className={cn(
                         'inline-flex items-center gap-2 rounded-md border px-4 text-sm font-medium ring-focus',
                         actType === t
-                          ? 'border-emerald-400/60 bg-emerald-500/20 text-white'
+                          ? 'border-emerald-500/40 bg-emerald-500/20 text-white'
                           : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
                       )}
                     >
@@ -484,7 +484,7 @@ export function LeadDetailClient({
                   className={cn(
                     'inline-flex items-center justify-between gap-1 rounded-md border px-3 text-sm font-medium ring-focus',
                     s === lead.stage
-                      ? 'border-emerald-400/60 bg-emerald-500/20 text-emerald-200'
+                      ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-200'
                       : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
                   )}
                 >
@@ -508,7 +508,7 @@ export function LeadDetailClient({
                   className={cn(
                     'inline-flex items-center justify-between gap-1 rounded-md border px-3 text-sm font-medium ring-focus',
                     t === lead.clientType
-                      ? 'border-emerald-400/60 bg-emerald-500/20 text-emerald-200'
+                      ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-200'
                       : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
                   )}
                 >

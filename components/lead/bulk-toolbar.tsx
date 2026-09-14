@@ -237,7 +237,7 @@ export function BulkToolbar({
         <div className={cn(
           'mt-2 rounded-lg border px-4 py-2.5 text-sm',
           result.failed.length === 0
-            ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200'
+            ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200'
             : 'border-amber-400/40 bg-amber-500/15 text-amber-200',
         )}>
           <div className="flex items-center justify-between gap-2">

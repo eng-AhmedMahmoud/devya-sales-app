@@ -86,7 +86,7 @@ export function NextActionsBlock({
               'inline-flex items-center gap-2 rounded-md border px-4 text-sm font-medium transition-colors ring-focus',
               open
                 ? 'border-white/30 bg-white/[0.12] text-white'
-                : 'border-emerald-400/45 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25',
+                : 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25',
             )}
           >
             <ListTodo className="h-4 w-4" />
@@ -135,7 +135,7 @@ export function NextActionsBlock({
                 type="button"
                 onClick={() => markDone(item)}
                 title="تم — حذف نهائي"
-                className="inline-flex shrink-0 items-center gap-2 rounded-md border border-emerald-400/45 bg-emerald-500/15 px-4 text-sm font-medium text-emerald-200 hover:bg-emerald-500/25 ring-focus"
+                className="inline-flex shrink-0 items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/15 px-4 text-sm font-medium text-emerald-200 hover:bg-emerald-500/25 ring-focus"
               >
                 <Check className="h-4 w-4" />
                 تم

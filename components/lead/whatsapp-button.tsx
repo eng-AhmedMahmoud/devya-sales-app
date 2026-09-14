@@ -47,7 +47,7 @@ export function WhatsAppButton({ phone, clientName, repName, className, iconOnly
       rel="noopener noreferrer"
       title="فتح واتساب"
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-md border border-emerald-400/45 bg-emerald-500/15 text-sm font-medium text-emerald-300 hover:bg-emerald-500/25 transition-colors ring-focus',
+        'inline-flex items-center justify-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/15 text-sm font-medium text-emerald-300 hover:bg-emerald-500/25 transition-colors ring-focus',
         iconOnly ? 'tap-box' : 'tap px-4',
         className,
       )}
