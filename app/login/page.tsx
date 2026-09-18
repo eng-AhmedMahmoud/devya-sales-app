@@ -27,12 +27,12 @@ export default async function LoginPage() {
         </div>
         <div className="surface-strong h-fit p-6">
           <h1 className="text-xl font-semibold text-white mb-1">تسجيل الدخول</h1>
-          <p className="text-base text-ink-300 mb-5">وصول داخلي لفريق المبيعات فقط.</p>
+          <p className="text-base text-ink-400 mb-5">وصول داخلي لفريق المبيعات فقط.</p>
           <Suspense fallback={null}>
             <LoginForm />
           </Suspense>
         </div>
-        <p className="mt-6 text-center text-sm text-ink-300">
+        <p className="mt-6 text-center text-sm text-ink-500">
           مشاكل تسجيل الدخول؟ تواصل مع المشرف.
         </p>
       </div>

@@ -261,9 +261,9 @@ export function LeadDetailClient({
         <div className="surface-strong h-fit p-5 md:p-6">
           <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
             <div>
-              <div className="text-sm text-ink-300 ltr-inline">{lead.code}</div>
+              <div className="text-sm text-ink-400 ltr-inline">{lead.code}</div>
               <h2 className="text-xl font-semibold text-white">{lead.clientName}</h2>
-              {lead.companyName && <div className="text-base text-ink-200">{lead.companyName}</div>}
+              {lead.companyName && <div className="text-base text-ink-300">{lead.companyName}</div>}
               {/* WhatsApp quick-dial in header */}
               {lead.phone && (
                 <div className="mt-1.5">
@@ -280,7 +280,7 @@ export function LeadDetailClient({
                 <button
                   onClick={promoteToClient}
                   disabled={pending}
-                  className="inline-flex items-center gap-2 rounded-md border border-blue-400/45 bg-blue-500/15 px-4 text-sm font-medium text-blue-300 hover:bg-blue-500/25 disabled:opacity-60 ring-focus"
+                  className="inline-flex items-center gap-2 rounded-md border border-blue-500/30 bg-blue-500/10 px-4 text-sm font-medium text-blue-300 hover:bg-blue-500/20 disabled:opacity-60 ring-focus"
                 >
                   <UserPlus className="h-4 w-4" />
                   إنشاء ملف عميل
@@ -292,7 +292,7 @@ export function LeadDetailClient({
                   <button
                     onClick={scheduleMeeting}
                     disabled={pending}
-                    className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
+                    className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-4 text-sm font-medium text-ink-200 hover:bg-white/5 ring-focus"
                   >
                     <Calendar className="h-4 w-4" />
                     حجز اجتماع
@@ -308,7 +308,7 @@ export function LeadDetailClient({
                   <button
                     onClick={markLost}
                     disabled={pending || lead.outcome === 'LOST'}
-                    className="inline-flex items-center gap-2 rounded-md border border-rose-400/45 bg-rose-500/15 px-4 text-sm font-medium text-rose-300 hover:bg-rose-500/25 disabled:opacity-60 ring-focus"
+                    className="inline-flex items-center gap-2 rounded-md border border-rose-500/30 bg-rose-500/10 px-4 text-sm font-medium text-rose-300 hover:bg-rose-500/20 disabled:opacity-60 ring-focus"
                   >
                     <ThumbsDown className="h-4 w-4" />
                     خسارة
@@ -319,7 +319,7 @@ export function LeadDetailClient({
           </div>
 
           {!canWrite && (
-            <p className="mb-5 rounded-md border border-white/[0.18] bg-ink-760 p-3.5 text-base text-ink-200">
+            <p className="mb-5 rounded-md border border-white/[0.06] bg-white/[0.02] p-3.5 text-base text-ink-200">
               هذا العميل مسند إلى {fmt(lead.assignedRepName)}. لديك صلاحية الاطلاع فقط.
             </p>
           )}
@@ -342,7 +342,7 @@ export function LeadDetailClient({
             <Detail label="الجمهور المستهدف" value={lead.targetAudience} />
           </div>
 
-          <div className="mt-5 rounded-md border border-violet-400/35 bg-violet-500/[0.12] p-4">
+          <div className="mt-5 rounded-md border border-violet-500/20 bg-violet-500/[0.06] p-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2 text-base">
                 <Sparkles className="h-4 w-4 text-violet-300" />
@@ -353,10 +353,10 @@ export function LeadDetailClient({
                     className={cn(
                       'rounded-md border px-2.5 py-0.5 text-sm font-semibold',
                       lead.aiScore >= 70
-                        ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
+                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
                         : lead.aiScore >= 40
-                          ? 'border-amber-400/45 bg-amber-500/15 text-amber-300'
-                          : 'border-rose-400/45 bg-rose-500/15 text-rose-300',
+                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                          : 'border-rose-500/30 bg-rose-500/10 text-rose-300',
                     )}
                   >
                     {lead.aiScore}/100
@@ -368,7 +368,7 @@ export function LeadDetailClient({
                 <button
                   onClick={runAiScore}
                   disabled={pending}
-                  className="inline-flex items-center gap-2 rounded-md border border-violet-400/45 bg-violet-500/15 px-4 text-sm font-medium text-violet-200 hover:bg-violet-500/25 disabled:opacity-60 ring-focus"
+                  className="inline-flex items-center gap-2 rounded-md border border-violet-500/30 bg-violet-500/10 px-4 text-sm font-medium text-violet-200 hover:bg-violet-500/20 disabled:opacity-60 ring-focus"
                 >
                   {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                   {lead.aiScore != null ? 'إعادة التقييم' : 'تقييم الآن'}
@@ -376,12 +376,12 @@ export function LeadDetailClient({
               )}
             </div>
             {lead.aiQualification && (
-              <p className="mt-2.5 text-base text-ink-100 whitespace-pre-wrap">{lead.aiQualification}</p>
+              <p className="mt-2.5 text-base text-ink-200 whitespace-pre-wrap">{lead.aiQualification}</p>
             )}
           </div>
 
           {lead.notes && (
-            <div className="mt-5 rounded-md border border-white/[0.18] bg-ink-760 p-4 text-base text-ink-100 whitespace-pre-wrap">
+            <div className="mt-5 rounded-md border border-white/[0.06] bg-white/[0.02] p-4 text-base text-ink-200 whitespace-pre-wrap">
               {lead.notes}
             </div>
           )}
@@ -404,8 +404,8 @@ export function LeadDetailClient({
                       className={cn(
                         'inline-flex items-center gap-2 rounded-md border px-4 text-sm font-medium ring-focus',
                         actType === t
-                          ? 'border-emerald-500/40 bg-emerald-500/20 text-white'
-                          : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
+                          ? 'border-emerald-500/40 bg-white/[0.08] text-white'
+                          : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
                       )}
                     >
                       {t === 'WHATSAPP' && <MessageSquare className="h-4 w-4" />}
@@ -436,7 +436,7 @@ export function LeadDetailClient({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 disabled:opacity-60 ring-focus"
+                    className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-100 disabled:opacity-60 ring-focus"
                   >
                     {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
                     تسجيل
@@ -448,21 +448,21 @@ export function LeadDetailClient({
 
           {/* The timeline is history, not a mutation — it stays for a viewer. */}
           <div className={canWrite ? 'mt-6' : ''}>
-            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">الجدول الزمني</div>
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-400 mb-2.5">الجدول الزمني</div>
             <ul className="space-y-2.5">
               {(lead.activities ?? []).map((a) => (
-                <li key={a.id} className="rounded-md border border-white/[0.18] bg-ink-760 p-3.5">
-                  <div className="flex items-center justify-between gap-2 text-sm text-ink-300">
+                <li key={a.id} className="rounded-md border border-white/[0.06] bg-white/[0.015] p-3.5">
+                  <div className="flex items-center justify-between gap-2 text-sm text-ink-400">
                     <span>{ACTIVITY_LABELS_AR[a.type]}</span>
                     <span className="ltr-inline">{new Date(a.occurredAt).toLocaleString('en-GB', { hour12: true })}</span>
                   </div>
                   {a.outcome && <div className="text-base text-white mt-1">{a.outcome}</div>}
-                  {a.note && <div className="text-base text-ink-200 mt-1 whitespace-pre-wrap">{a.note}</div>}
-                  {a.actorName && <div className="text-sm text-ink-300 mt-1">{a.actorName}</div>}
+                  {a.note && <div className="text-base text-ink-300 mt-1 whitespace-pre-wrap">{a.note}</div>}
+                  {a.actorName && <div className="text-sm text-ink-500 mt-1">{a.actorName}</div>}
                 </li>
               ))}
               {(!lead.activities || lead.activities.length === 0) && (
-                <li className="text-base text-ink-300 text-center py-6">لا يوجد نشاط بعد</li>
+                <li className="text-base text-ink-500 text-center py-6">لا يوجد نشاط بعد</li>
               )}
             </ul>
           </div>
@@ -474,7 +474,7 @@ export function LeadDetailClient({
             are already on the card above, so a viewer loses nothing. */}
         {canWrite && (
           <div className="surface-strong h-fit p-4 md:p-5">
-            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">تغيير المرحلة</div>
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-400 mb-2.5">تغيير المرحلة</div>
             <div className="grid grid-cols-2 gap-2">
               {ALL_STAGES.map((s) => (
                 <button
@@ -484,8 +484,8 @@ export function LeadDetailClient({
                   className={cn(
                     'inline-flex items-center justify-between gap-1 rounded-md border px-3 text-sm font-medium ring-focus',
                     s === lead.stage
-                      ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-200'
-                      : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
+                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+                      : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
                   )}
                 >
                   <span>{STAGE_LABELS_AR[s]}</span>
@@ -498,7 +498,7 @@ export function LeadDetailClient({
 
         {canWrite && (
           <div className="surface-strong h-fit p-4 md:p-5">
-            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">نوع العميل (قمع المبيعات)</div>
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-400 mb-2.5">نوع العميل (قمع المبيعات)</div>
             <div className="grid grid-cols-1 gap-2">
               {CLIENT_TYPE_ORDER.map((t) => (
                 <button
@@ -508,8 +508,8 @@ export function LeadDetailClient({
                   className={cn(
                     'inline-flex items-center justify-between gap-1 rounded-md border px-3 text-sm font-medium ring-focus',
                     t === lead.clientType
-                      ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-200'
-                      : 'border-white/20 bg-white/[0.06] text-ink-200 hover:text-white hover:bg-white/[0.12]',
+                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+                      : 'border-white/10 bg-white/[0.02] text-ink-300 hover:text-white',
                   )}
                 >
                   <span>{CLIENT_TYPE_LABELS_AR[t]}</span>
@@ -522,27 +522,27 @@ export function LeadDetailClient({
 
         {lead.booking && (
           <div className="surface h-fit p-4 md:p-5">
-            <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2">اجتماع مسجل</div>
+            <div className="text-sm font-semibold uppercase tracking-wider text-ink-400 mb-2">اجتماع مسجل</div>
             <div className="text-base text-white ltr-inline">
               {new Date(lead.booking.scheduledAt).toLocaleString('en-GB', { hour12: true })}
             </div>
-            <div className="text-sm text-ink-300 mt-1">
+            <div className="text-sm text-ink-400 mt-1">
               {lead.booking.calendarType} · {lead.booking.status}
             </div>
           </div>
         )}
 
         <div className="surface h-fit p-4 md:p-5">
-          <div className="text-sm font-semibold uppercase tracking-wider text-ink-300 mb-2.5">سجل الأحداث</div>
+          <div className="text-sm font-semibold uppercase tracking-wider text-ink-400 mb-2.5">سجل الأحداث</div>
           <ul className="space-y-2.5 text-sm">
             {(lead.events ?? []).slice().reverse().slice(0, 15).map((ev) => (
               <li key={ev.id} className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="text-ink-100">{ev.type}</div>
-                  {ev.detail && <div className="text-ink-300">{ev.detail}</div>}
-                  {ev.actorName && <div className="text-ink-300">{ev.actorName}</div>}
+                  <div className="text-ink-200">{ev.type}</div>
+                  {ev.detail && <div className="text-ink-500">{ev.detail}</div>}
+                  {ev.actorName && <div className="text-ink-500">{ev.actorName}</div>}
                 </div>
-                <span className="text-ink-300 ltr-inline shrink-0">
+                <span className="text-ink-500 ltr-inline shrink-0">
                   {new Date(ev.createdAt).toLocaleDateString('en-GB')}
                 </span>
               </li>
@@ -557,7 +557,7 @@ export function LeadDetailClient({
 function Detail({ label, value, ltr }: { label: string; value: string | null | undefined; ltr?: boolean }) {
   return (
     <div className="min-w-0">
-      <div className="text-sm font-medium text-ink-300">{label}</div>
+      <div className="text-sm font-medium text-ink-500">{label}</div>
       <div className={cn('text-white break-words', ltr && 'ltr-inline')}>{fmt(value)}</div>
     </div>
   );

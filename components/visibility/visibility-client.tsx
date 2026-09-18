@@ -81,7 +81,7 @@ export function VisibilityClient({ overview }: { overview: RepVisibilityOverview
             <p className="text-base text-ink-100">
               يرى كل مندوب عملاءه فقط بشكل افتراضي. امنح رؤية إضافية هنا عند الحاجة.
             </p>
-            <p className="text-sm text-ink-300">
+            <p className="text-sm text-ink-400">
               الصلاحية للاطّلاع فقط: المندوب المستفيد يرى بيانات زميله دون حق التعديل أو إعادة
               الإسناد أو الحذف، ولا تمنحه أي صلاحيات إشرافية.
             </p>
@@ -91,7 +91,7 @@ export function VisibilityClient({ overview }: { overview: RepVisibilityOverview
           <button
             type="button"
             onClick={() => setGrantFor('')}
-            className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 ring-focus"
+            className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-100 ring-focus"
           >
             <Plus className="h-5 w-5" />
             منح رؤية
@@ -100,7 +100,7 @@ export function VisibilityClient({ overview }: { overview: RepVisibilityOverview
       </section>
 
       {rows.length === 0 ? (
-        <section className="surface-strong h-fit p-8 text-center text-ink-300">
+        <section className="surface-strong h-fit p-8 text-center text-ink-400">
           لا يوجد مندوبون نشطون في فريق المبيعات.
         </section>
       ) : (
@@ -155,7 +155,7 @@ function RepCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="text-lg font-semibold text-white truncate">{repName(row)}</div>
-          <div className="text-sm text-ink-300 truncate">
+          <div className="text-sm text-ink-400 truncate">
             <span className="ltr-inline">{row.rep.email}</span>
           </div>
         </div>
@@ -172,13 +172,13 @@ function RepCard({
           <div>
             <div className="form-label">يرى الآن</div>
             {row.grants.length === 0 ? (
-              <p className="text-base text-ink-300">عملاءه فقط — لا توجد صلاحيات إضافية.</p>
+              <p className="text-base text-ink-400">عملاءه فقط — لا توجد صلاحيات إضافية.</p>
             ) : (
               <ul className="space-y-2">
                 {row.grants.map((grant) => (
                   <li
                     key={grant.id}
-                    className="flex items-center justify-between gap-2 rounded-md border border-white/15 bg-white/[0.05] ps-3 pe-1"
+                    className="flex items-center justify-between gap-2 rounded-md border border-white/10 bg-white/[0.03] ps-3 pe-1"
                   >
                     <div className="min-w-0 py-2">
                       <div className="text-base text-white truncate">
@@ -187,7 +187,7 @@ function RepCard({
                       {grant.note && (
                         <div className="text-sm text-ink-200 break-words">{grant.note}</div>
                       )}
-                      <div className="text-sm text-ink-300">
+                      <div className="text-sm text-ink-500">
                         منحها {grant.grantedByName ?? '—'} ·{' '}
                         <span className="ltr-inline">{formatDate(grant.createdAt)}</span>
                       </div>
@@ -198,7 +198,7 @@ function RepCard({
                       disabled={busy}
                       title="إلغاء الصلاحية"
                       aria-label="إلغاء الصلاحية"
-                      className="tap-box shrink-0 rounded-md text-ink-300 hover:text-rose-300 hover:bg-white/[0.08] transition-colors disabled:opacity-60 ring-focus"
+                      className="tap-box shrink-0 rounded-md text-ink-400 hover:text-rose-300 hover:bg-white/[0.03] transition-colors disabled:opacity-60 ring-focus"
                     >
                       {revokingId === grant.id ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -221,7 +221,7 @@ function RepCard({
             <button
               type="button"
               onClick={onGrant}
-              className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] hover:border-white/30 transition-colors ring-focus"
+              className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-4 text-sm font-medium text-ink-200 hover:bg-white/5 hover:border-white/25 transition-colors ring-focus"
             >
               <Plus className="h-5 w-5" />
               منح رؤية
@@ -293,15 +293,15 @@ function GrantDialog({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="absolute inset-0 bg-black/75" />
+      <div className="absolute inset-0 bg-ink-900/80" />
       <form
         onSubmit={submit}
-        className="relative w-full max-w-lg rounded-xl border border-white/20 bg-ink-775 shadow-2xl"
+        className="relative w-full max-w-lg rounded-xl border border-white/10 bg-ink-800 shadow-2xl"
       >
         <button
           type="button"
           onClick={onClose}
-          className="tap-box absolute left-2 top-2 rounded-md text-ink-300 hover:bg-white/[0.10] hover:text-white ring-focus"
+          className="tap-box absolute left-2 top-2 rounded-md text-ink-400 hover:bg-white/5 hover:text-white ring-focus"
           aria-label="إغلاق"
         >
           <X className="h-5 w-5" />
@@ -344,7 +344,7 @@ function GrantDialog({
 
           {error && <p className="text-base text-rose-300">{error}</p>}
 
-          <p className="text-sm text-ink-300">
+          <p className="text-sm text-ink-500">
             الرؤية للاطّلاع فقط ويمكن إلغاؤها في أي وقت.
           </p>
         </div>
@@ -353,7 +353,7 @@ function GrantDialog({
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 disabled:opacity-60 ring-focus"
+            className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-100 disabled:opacity-60 ring-focus"
           >
             {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
             منح الرؤية
@@ -361,7 +361,7 @@ function GrantDialog({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
+            className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-4 text-sm font-medium text-ink-200 hover:bg-white/5 ring-focus"
           >
             إلغاء
           </button>

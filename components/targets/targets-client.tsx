@@ -73,7 +73,7 @@ export function TargetsClient({ targets, team }: { targets: SalesTarget[]; team:
             onChange={(e) => setCount(e.target.value)} />
         </label>
         <button type="submit" disabled={pending}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-4 text-base font-semibold hover:bg-ink-200 disabled:opacity-60 ring-focus">
+          className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-4 text-base font-semibold hover:bg-ink-100 disabled:opacity-60 ring-focus">
           {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
           حفظ
         </button>
@@ -81,7 +81,7 @@ export function TargetsClient({ targets, team }: { targets: SalesTarget[]; team:
 
       <div className="surface-strong h-fit overflow-x-auto">
         <table className="w-full min-w-[560px] text-sm">
-          <thead className="text-xs uppercase tracking-wider text-ink-300 border-b border-white/10">
+          <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
             <tr>
               <th className="text-start px-4 py-3">المندوب</th>
               <th className="text-start px-4 py-3">الشهر</th>
@@ -91,15 +91,15 @@ export function TargetsClient({ targets, team }: { targets: SalesTarget[]; team:
           </thead>
           <tbody>
             {list.map((t) => (
-              <tr key={t.id} className="border-b border-white/10">
+              <tr key={t.id} className="border-b border-white/[0.04]">
                 <td className="px-4 py-3 text-white">{t.rep?.name ?? t.rep?.email ?? t.repId}</td>
-                <td className="px-4 py-3 text-ink-200"><span className="ltr-inline">{t.month.slice(0, 7)}</span></td>
+                <td className="px-4 py-3 text-ink-300"><span className="ltr-inline">{t.month.slice(0, 7)}</span></td>
                 <td className="px-4 py-3 text-emerald-300"><span className="ltr-inline">{t.revenueTargetSar.toLocaleString('en-US')}</span></td>
-                <td className="px-4 py-3 text-ink-200"><span className="ltr-inline">{t.leadCountTarget ?? '—'}</span></td>
+                <td className="px-4 py-3 text-ink-300"><span className="ltr-inline">{t.leadCountTarget ?? '—'}</span></td>
               </tr>
             ))}
             {list.length === 0 && (
-              <tr><td colSpan={4} className="text-center text-ink-300 py-8">لا توجد أهداف</td></tr>
+              <tr><td colSpan={4} className="text-center text-ink-500 py-8">لا توجد أهداف</td></tr>
             )}
           </tbody>
         </table>

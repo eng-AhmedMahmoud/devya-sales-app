@@ -31,7 +31,7 @@ export default async function PipelinePage() {
         actions={
           <Link
             href="/leads/new"
-            className="tap inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 ring-focus"
+            className="tap inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-100 ring-focus"
           >
             <Plus className="h-5 w-5" />
             إضافة عميل

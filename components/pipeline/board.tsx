@@ -95,7 +95,7 @@ export function PipelineBoard({
             <div className={cn('surface border-t-4 rounded-t-lg p-3.5', STAGE_COLOR[stage])}>
               <div className="flex items-center justify-between gap-2">
                 <div className="text-base font-semibold text-white">{STAGE_LABELS_AR[stage]}</div>
-                <span className="text-sm font-medium text-ink-200 ltr-inline">{items.length}</span>
+                <span className="text-sm font-medium text-ink-400 ltr-inline">{items.length}</span>
               </div>
             </div>
             <div className="surface-strong border-t-0 rounded-b-lg p-2.5 min-h-[400px] space-y-2.5">
@@ -114,7 +114,7 @@ export function PipelineBoard({
                   }}
                   onDragEnd={() => setDragging(null)}
                   className={cn(
-                    'block rounded-md border border-white/[0.18] bg-ink-760 p-3.5 hover:border-white/35 hover:bg-ink-700 active:border-emerald-500/40 transition-colors ring-focus',
+                    'block rounded-md border border-white/10 bg-white/[0.02] p-3.5 hover:border-white/25 hover:bg-white/[0.04] active:border-emerald-500/40 transition-colors ring-focus',
                     dragging === lead.id && 'opacity-40',
                   )}
                 >
@@ -123,12 +123,12 @@ export function PipelineBoard({
                     <span className="chip ltr-inline shrink-0">{lead.code}</span>
                   </div>
                   {lead.companyName && (
-                    <div className="text-sm text-ink-300 mt-1 truncate">{lead.companyName}</div>
+                    <div className="text-sm text-ink-400 mt-1 truncate">{lead.companyName}</div>
                   )}
                   <div className="mt-2">
                     <span className="chip">{CLIENT_TYPE_LABELS_AR[lead.clientType]}</span>
                   </div>
-                  <div className="mt-2.5 flex items-center justify-between gap-2 text-sm text-ink-300">
+                  <div className="mt-2.5 flex items-center justify-between gap-2 text-sm text-ink-400">
                     <span className="ltr-inline truncate">{lead.assignedRepName ?? '—'}</span>
                     {lead.expectedValueSar != null && (
                       <span className="ltr-inline font-medium text-emerald-300 shrink-0">
@@ -139,7 +139,7 @@ export function PipelineBoard({
                 </Link>
               ))}
               {items.length === 0 && (
-                <div className="text-center text-sm text-ink-300 py-8">لا توجد عملاء</div>
+                <div className="text-center text-sm text-ink-500 py-8">لا توجد عملاء</div>
               )}
             </div>
           </div>

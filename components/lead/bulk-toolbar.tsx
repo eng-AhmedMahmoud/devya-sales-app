@@ -118,14 +118,14 @@ export function BulkToolbar({
           {!allPageSelected && (
             <button
               onClick={onSelectAllPage}
-              className="text-sm text-emerald-300 hover:text-emerald-200 underline underline-offset-4 ring-focus rounded-md px-1"
+              className="text-sm text-emerald-400 hover:text-emerald-300 underline underline-offset-4 ring-focus rounded-md px-1"
             >
               تحديد الصفحة كلها ({totalOnPage})
             </button>
           )}
           <button
             onClick={onClearSelection}
-            className="text-sm text-ink-300 hover:text-white inline-flex items-center gap-1 ring-focus rounded-md px-1"
+            className="text-sm text-ink-400 hover:text-ink-200 inline-flex items-center gap-1 ring-focus rounded-md px-1"
           >
             <X className="h-4 w-4" /> إلغاء
           </button>
@@ -140,19 +140,19 @@ export function BulkToolbar({
             <button
               onClick={() => { setStageOpen((p) => !p); setClientTypeOpen(false); setAssignOpen(false); }}
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.08] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.14] disabled:opacity-50 ring-focus"
+              className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-4 text-sm font-medium text-ink-200 hover:bg-white/[0.08] disabled:opacity-50 ring-focus"
             >
               <MoveRight className="h-4 w-4" />
               نقل مرحلة
               <ChevronDown className="h-4 w-4" />
             </button>
             {stageOpen && (
-              <div className="absolute bottom-full mb-2 right-0 w-52 rounded-lg border border-white/20 bg-ink-775 shadow-xl z-50 py-1 overflow-hidden">
+              <div className="absolute bottom-full mb-2 right-0 w-52 rounded-lg border border-white/10 bg-ink-800 shadow-xl z-50 py-1 overflow-hidden">
                 {ALL_STAGES.map((s) => (
                   <button
                     key={s}
                     onClick={() => handleSetStage(s)}
-                    className="w-full text-start px-4 text-sm text-ink-100 hover:bg-white/[0.10] hover:text-white ring-focus"
+                    className="w-full text-start px-4 text-sm text-ink-200 hover:bg-white/[0.06] hover:text-white ring-focus"
                   >
                     {STAGE_LABELS_AR[s]}
                   </button>
@@ -166,19 +166,19 @@ export function BulkToolbar({
             <button
               onClick={() => { setClientTypeOpen((p) => !p); setStageOpen(false); setAssignOpen(false); }}
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.08] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.14] disabled:opacity-50 ring-focus"
+              className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-4 text-sm font-medium text-ink-200 hover:bg-white/[0.08] disabled:opacity-50 ring-focus"
             >
               <Users className="h-4 w-4" />
               نوع العميل
               <ChevronDown className="h-4 w-4" />
             </button>
             {clientTypeOpen && (
-              <div className="absolute bottom-full mb-2 right-0 w-56 rounded-lg border border-white/20 bg-ink-775 shadow-xl z-50 py-1 overflow-hidden">
+              <div className="absolute bottom-full mb-2 right-0 w-56 rounded-lg border border-white/10 bg-ink-800 shadow-xl z-50 py-1 overflow-hidden">
                 {CLIENT_TYPE_ORDER.map((t) => (
                   <button
                     key={t}
                     onClick={() => handleSetClientType(t)}
-                    className="w-full text-start px-4 text-sm text-ink-100 hover:bg-white/[0.10] hover:text-white ring-focus"
+                    className="w-full text-start px-4 text-sm text-ink-200 hover:bg-white/[0.06] hover:text-white ring-focus"
                   >
                     {CLIENT_TYPE_LABELS_AR[t]}
                   </button>
@@ -193,25 +193,25 @@ export function BulkToolbar({
               <button
                 onClick={() => { setAssignOpen((p) => !p); setStageOpen(false); setClientTypeOpen(false); }}
                 disabled={pending}
-                className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.08] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.14] disabled:opacity-50 ring-focus"
+                className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-4 text-sm font-medium text-ink-200 hover:bg-white/[0.08] disabled:opacity-50 ring-focus"
               >
                 <UserCheck className="h-4 w-4" />
                 إسناد
                 <ChevronDown className="h-4 w-4" />
               </button>
               {assignOpen && (
-                <div className="absolute bottom-full mb-2 right-0 w-56 rounded-lg border border-white/20 bg-ink-775 shadow-xl z-50 py-1 overflow-hidden">
+                <div className="absolute bottom-full mb-2 right-0 w-56 rounded-lg border border-white/10 bg-ink-800 shadow-xl z-50 py-1 overflow-hidden">
                   {team.filter((m) => ['SALES_REP', 'SALES_MANAGER'].includes(m.role)).map((m) => (
                     <button
                       key={m.id}
                       onClick={() => handleAssign(m.id)}
-                      className="w-full text-start px-4 text-sm text-ink-100 hover:bg-white/[0.10] hover:text-white ring-focus"
+                      className="w-full text-start px-4 text-sm text-ink-200 hover:bg-white/[0.06] hover:text-white ring-focus"
                     >
                       {m.name ?? m.email}
                     </button>
                   ))}
                   {team.filter((m) => ['SALES_REP', 'SALES_MANAGER'].includes(m.role)).length === 0 && (
-                    <div className="px-4 py-2 text-sm text-ink-300">لا يوجد مندوبون</div>
+                    <div className="px-4 py-2 text-sm text-ink-500">لا يوجد مندوبون</div>
                   )}
                 </div>
               )}
@@ -223,7 +223,7 @@ export function BulkToolbar({
             <button
               onClick={handleDelete}
               disabled={pending}
-              className="inline-flex items-center gap-2 rounded-md border border-rose-400/45 bg-rose-500/15 px-4 text-sm font-medium text-rose-300 hover:bg-rose-500/25 disabled:opacity-50 ring-focus"
+              className="inline-flex items-center gap-2 rounded-md border border-rose-500/30 bg-rose-500/10 px-4 text-sm font-medium text-rose-300 hover:bg-rose-500/20 disabled:opacity-50 ring-focus"
             >
               {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               حذف
@@ -237,8 +237,8 @@ export function BulkToolbar({
         <div className={cn(
           'mt-2 rounded-lg border px-4 py-2.5 text-sm',
           result.failed.length === 0
-            ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200'
-            : 'border-amber-400/40 bg-amber-500/15 text-amber-200',
+            ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+            : 'border-amber-500/20 bg-amber-500/10 text-amber-200',
         )}>
           <div className="flex items-center justify-between gap-2">
             <span>
@@ -257,13 +257,13 @@ export function BulkToolbar({
                   التفاصيل
                 </button>
               )}
-              <button onClick={() => setResult(null)} className="tap-box rounded-md text-ink-300 hover:text-white ring-focus">
+              <button onClick={() => setResult(null)} className="tap-box rounded-md text-ink-400 hover:text-white ring-focus">
                 <X className="h-4 w-4" />
               </button>
             </div>
           </div>
           {showFailures && result.failed.length > 0 && (
-            <ul className="mt-2 space-y-1 text-sm text-ink-200">
+            <ul className="mt-2 space-y-1 text-sm text-ink-300">
               {result.failed.map((f) => (
                 <li key={f.id} className="ltr-inline">
                   {f.id}: {f.reason}

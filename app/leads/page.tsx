@@ -64,14 +64,14 @@ export default async function LeadsListPage({
           <div className="flex items-center gap-2">
             <a
               href={api.exportUrl({ stage: sp.stage, clientType: sp.clientType, source: sp.source, budget: sp.budget, q: sp.q })}
-              className="tap inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] hover:border-white/30 ring-focus"
+              className="tap inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.02] px-4 text-sm font-medium text-ink-200 hover:bg-white/5 ring-focus"
             >
               <Download className="h-4 w-4" />
               تصدير XLSX
             </a>
             <Link
               href="/leads/new"
-              className="tap inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-4 text-sm font-semibold hover:bg-ink-200 ring-focus"
+              className="tap inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-4 text-sm font-semibold hover:bg-ink-100 ring-focus"
             >
               <Plus className="h-5 w-5" />
               إضافة
@@ -124,7 +124,7 @@ export default async function LeadsListPage({
         </label>
         <button
           type="submit"
-          className="sm:col-span-2 xl:col-span-5 xl:justify-self-start rounded-md bg-white text-ink-900 px-6 text-sm font-semibold hover:bg-ink-200 ring-focus"
+          className="sm:col-span-2 xl:col-span-5 xl:justify-self-start rounded-md bg-white text-ink-900 px-6 text-sm font-semibold hover:bg-ink-100 ring-focus"
         >
           تصفية
         </button>
@@ -142,29 +142,29 @@ export default async function LeadsListPage({
           {page > 1 ? (
             <Link
               href={pageHref(page - 1)}
-              className="tap inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
+              className="tap inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-4 font-medium text-ink-200 hover:bg-white/5 ring-focus"
             >
               السابق
             </Link>
           ) : (
-            <span className="tap inline-flex items-center rounded-md border border-white/10 px-4 text-ink-450">
+            <span className="tap inline-flex items-center rounded-md border border-white/5 px-4 text-ink-600">
               السابق
             </span>
           )}
 
-          <span className="text-ink-300">
+          <span className="text-ink-400">
             صفحة {page} من {pageCount}
           </span>
 
           {page < pageCount ? (
             <Link
               href={pageHref(page + 1)}
-              className="tap inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 font-medium text-ink-100 hover:bg-white/[0.12] ring-focus"
+              className="tap inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-4 font-medium text-ink-200 hover:bg-white/5 ring-focus"
             >
               التالي
             </Link>
           ) : (
-            <span className="tap inline-flex items-center rounded-md border border-white/10 px-4 text-ink-450">
+            <span className="tap inline-flex items-center rounded-md border border-white/5 px-4 text-ink-600">
               التالي
             </span>
           )}

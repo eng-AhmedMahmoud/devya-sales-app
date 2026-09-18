@@ -25,7 +25,7 @@ export default async function HistoryPage() {
       <PageHeader title="السجل" subtitle={`${closed.length} صفقة مغلقة`} />
       <div className="surface-strong overflow-x-auto">
         <table className="w-full min-w-[760px] text-sm">
-          <thead className="text-xs uppercase tracking-wider text-ink-300 border-b border-white/10">
+          <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
             <tr>
               <th className="text-start px-4 py-3">الكود</th>
               <th className="text-start px-4 py-3">العميل</th>
@@ -37,7 +37,7 @@ export default async function HistoryPage() {
           </thead>
           <tbody>
             {closed.map((l) => (
-              <tr key={l.id} className="border-b border-white/10">
+              <tr key={l.id} className="border-b border-white/[0.04]">
                 <td className="px-4 py-2">
                   <Link
                     href={`/leads/${l.id}`}
@@ -52,9 +52,9 @@ export default async function HistoryPage() {
                     {l.outcome}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-ink-200">{STAGE_LABELS_AR[l.stage]}</td>
-                <td className="px-4 py-3 text-ink-200">{l.assignedRepName ?? '—'}</td>
-                <td className="px-4 py-3 text-ink-200">
+                <td className="px-4 py-3 text-ink-300">{STAGE_LABELS_AR[l.stage]}</td>
+                <td className="px-4 py-3 text-ink-300">{l.assignedRepName ?? '—'}</td>
+                <td className="px-4 py-3 text-ink-300">
                   <span className="ltr-inline">
                     {(l.wonAt || l.lostAt) ? new Date(l.wonAt || l.lostAt!).toLocaleDateString('en-GB') : '—'}
                   </span>
@@ -63,7 +63,7 @@ export default async function HistoryPage() {
             ))}
             {closed.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center text-ink-300 py-10">لا توجد صفقات مغلقة</td>
+                <td colSpan={6} className="text-center text-ink-500 py-10">لا توجد صفقات مغلقة</td>
               </tr>
             )}
           </tbody>

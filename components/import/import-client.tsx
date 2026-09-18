@@ -99,7 +99,7 @@ export function ImportClient({ team }: { team: TeamMember[] }) {
           </select>
         </label>
         <button onClick={apply} disabled={pending || !rows || okCount === 0}
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-5 text-base font-semibold hover:bg-ink-200 disabled:opacity-50 ring-focus">
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-5 text-base font-semibold hover:bg-ink-100 disabled:opacity-50 ring-focus">
           {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />}
           استيراد {okCount ? `(${okCount})` : ''}
         </button>
@@ -116,7 +116,7 @@ export function ImportClient({ team }: { team: TeamMember[] }) {
 
           <div className="surface-strong overflow-x-auto">
             <table className="w-full min-w-[900px] text-sm">
-              <thead className="text-xs uppercase tracking-wider text-ink-300 border-b border-white/10">
+              <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
                 <tr>
                   <th className="px-4 py-2 text-start">#</th>
                   <th className="px-4 py-2 text-start">العميل</th>
@@ -129,13 +129,13 @@ export function ImportClient({ team }: { team: TeamMember[] }) {
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.index} className="border-b border-white/10">
-                    <td className="px-4 py-2.5 text-ink-300"><span className="ltr-inline">{r.index}</span></td>
+                  <tr key={r.index} className="border-b border-white/[0.04]">
+                    <td className="px-4 py-2.5 text-ink-400"><span className="ltr-inline">{r.index}</span></td>
                     <td className="px-4 py-2.5 text-white">{r.clientName}</td>
-                    <td className="px-4 py-2.5 text-ink-200">{r.companyName ?? '—'}</td>
-                    <td className="px-4 py-2.5 text-ink-200"><span className="ltr-inline">{r.phone ?? '—'}</span></td>
-                    <td className="px-4 py-2.5 text-ink-200">{SOURCE_LABELS_AR[r.source]}</td>
-                    <td className="px-4 py-2.5 text-ink-200">{STAGE_LABELS_AR[r.stage]}</td>
+                    <td className="px-4 py-2.5 text-ink-300">{r.companyName ?? '—'}</td>
+                    <td className="px-4 py-2.5 text-ink-300"><span className="ltr-inline">{r.phone ?? '—'}</span></td>
+                    <td className="px-4 py-2.5 text-ink-300">{SOURCE_LABELS_AR[r.source]}</td>
+                    <td className="px-4 py-2.5 text-ink-300">{STAGE_LABELS_AR[r.stage]}</td>
                     <td className="px-4 py-2.5 text-sm">
                       {r.validationError ? (
                         <span className="text-rose-300">{r.validationError}</span>

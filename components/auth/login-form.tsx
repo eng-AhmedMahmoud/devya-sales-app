@@ -84,7 +84,7 @@ export function LoginForm() {
     return (
       <form onSubmit={submitCode} className="space-y-4">
         {notice && (
-          <div className="flex items-start gap-2.5 rounded-md border border-emerald-500/40 bg-emerald-500/15 px-3 py-2.5 text-sm text-emerald-200">
+          <div className="flex items-start gap-2.5 rounded-md border border-emerald-500/40 bg-emerald-500/[0.08] px-3 py-2.5 text-sm text-emerald-200">
             <MailCheck className="h-4 w-4 mt-0.5 shrink-0" />
             <span>{notice}</span>
           </div>
@@ -107,7 +107,7 @@ export function LoginForm() {
           />
         </label>
         {error && (
-          <div className="text-sm text-rose-200 rounded-md border border-rose-400/45 bg-rose-500/15 px-3 py-2.5">
+          <div className="text-sm text-rose-300 rounded-md border border-rose-500/30 bg-rose-500/[0.08] px-3 py-2.5">
             {error}
           </div>
         )}
@@ -124,7 +124,7 @@ export function LoginForm() {
             type="button"
             onClick={resend}
             disabled={pending}
-            className="text-sm text-ink-300 hover:text-white transition-colors disabled:opacity-60 ring-focus rounded-md px-1"
+            className="text-sm text-ink-400 hover:text-ink-200 transition-colors disabled:opacity-60 ring-focus rounded-md px-1"
           >
             إعادة إرسال الرمز
           </button>
@@ -136,7 +136,7 @@ export function LoginForm() {
               setNotice(null);
               setError(null);
             }}
-            className="text-sm text-ink-300 hover:text-white transition-colors ring-focus rounded-md px-1"
+            className="text-sm text-ink-400 hover:text-ink-200 transition-colors ring-focus rounded-md px-1"
           >
             العودة لتسجيل الدخول
           </button>
@@ -173,12 +173,12 @@ export function LoginForm() {
         />
       </label>
       <div className="flex justify-end">
-        <a href={FORGOT_PASSWORD_URL} className="tap inline-flex items-center text-sm text-ink-300 hover:text-white transition-colors ring-focus rounded-md px-1">
+        <a href={FORGOT_PASSWORD_URL} className="tap inline-flex items-center text-sm text-ink-400 hover:text-ink-200 transition-colors ring-focus rounded-md px-1">
           نسيت كلمة المرور؟
         </a>
       </div>
       {error && (
-        <div className="text-sm text-rose-200 rounded-md border border-rose-400/45 bg-rose-500/15 px-3 py-2.5">
+        <div className="text-sm text-rose-300 rounded-md border border-rose-500/30 bg-rose-500/[0.08] px-3 py-2.5">
           {error}
         </div>
       )}

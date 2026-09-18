@@ -38,7 +38,7 @@ const TONE_BADGE: Record<Tone, { icon: typeof Info; color: string; bg: string; b
   success: { icon: CheckCircle2, color: '#10B981', bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.35)' },
 };
 const TONE_BUTTON: Record<Tone, string> = {
-  default: 'bg-white text-ink-900 hover:bg-ink-200',
+  default: 'bg-white text-ink-900 hover:bg-ink-100',
   info: 'bg-blue-500 text-white hover:bg-blue-400',
   warn: 'bg-amber-500 text-ink-900 hover:bg-amber-400',
   danger: 'bg-rose-500 text-white hover:bg-rose-400',
@@ -94,22 +94,22 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
       {state && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" role="dialog" aria-modal="true"
           onClick={(e) => { if (e.target === e.currentTarget) close(false); }}>
-          <div className="absolute inset-0 bg-black/75" />
-          <div className="relative w-full max-w-md rounded-xl border border-white/20 bg-ink-775 shadow-2xl">
+          <div className="absolute inset-0 bg-ink-900/80" />
+          <div className="relative w-full max-w-md rounded-xl border border-white/10 bg-ink-800 shadow-2xl">
             <button type="button" onClick={() => close(false)}
-              className="tap-box absolute left-2 top-2 rounded-md text-ink-300 hover:bg-white/[0.10] hover:text-white ring-focus"
+              className="tap-box absolute left-2 top-2 rounded-md text-ink-400 hover:bg-white/[0.06] hover:text-white ring-focus"
               aria-label="إغلاق">
               <X className="h-5 w-5" />
             </button>
             <div className="p-5 pt-6">
               <ToneIcon tone={state.tone} />
               <h3 className="mt-3 text-lg font-semibold text-white">{state.title}</h3>
-              {state.message && <p className="mt-2 text-base text-ink-200 whitespace-pre-wrap">{state.message}</p>}
+              {state.message && <p className="mt-2 text-base text-ink-300 whitespace-pre-wrap">{state.message}</p>}
             </div>
-            <div className="flex items-center justify-start gap-2 px-5 py-4 border-t border-white/10">
+            <div className="flex items-center justify-start gap-2 px-5 py-4 border-t border-white/[0.06]">
               {state.kind === 'confirm' && (
                 <button type="button" onClick={() => close(false)}
-                  className="inline-flex items-center rounded-md border border-white/20 bg-white/[0.06] px-4 text-sm font-medium text-ink-100 hover:bg-white/[0.12] ring-focus">
+                  className="inline-flex items-center rounded-md border border-white/10 bg-white/[0.02] px-4 text-sm font-medium text-ink-200 hover:bg-white/[0.05] ring-focus">
                   {state.cancelLabel}
                 </button>
               )}

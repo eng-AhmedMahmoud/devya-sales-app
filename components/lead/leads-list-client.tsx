@@ -78,7 +78,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
       {/* min-w keeps the columns readable; the wrapper scrolls on a 1024px iPad. */}
       <div className="surface-strong overflow-x-auto">
         <table className="w-full min-w-[1040px] text-sm">
-          <thead className="text-xs uppercase tracking-wider text-ink-300 border-b border-white/10">
+          <thead className="text-xs uppercase tracking-wider text-ink-400 border-b border-white/5">
             <tr>
               {bulkMode && (
                 <th className="px-3 py-2 w-14">
@@ -109,8 +109,8 @@ export function LeadsListClient({ leads, user, team }: Props) {
                 <tr
                   key={l.id}
                   className={cn(
-                    'border-b border-white/10 hover:bg-white/[0.04]',
-                    isSelected && 'bg-emerald-500/[0.12]',
+                    'border-b border-white/[0.04] hover:bg-white/[0.02]',
+                    isSelected && 'bg-emerald-500/[0.06]',
                   )}
                 >
                   {bulkMode && (
@@ -138,7 +138,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
                   </td>
                   <td className="px-4 py-3 text-white">{l.clientName}</td>
                   <td className="px-4 py-3 text-ink-300">{l.companyName ?? '—'}</td>
-                  <td className="px-4 py-2 text-ink-200">
+                  <td className="px-4 py-2 text-ink-300">
                     <div className="flex items-center gap-2">
                       <span className="ltr-inline">{l.phone ?? '—'}</span>
                       {l.phone && (
@@ -151,17 +151,17 @@ export function LeadsListClient({ leads, user, team }: Props) {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-ink-200">{SOURCE_LABELS_AR[l.source]}</td>
-                  <td className="px-4 py-3 text-ink-200">{BUDGET_LABELS_AR[l.budget]}</td>
-                  <td className="px-4 py-3 text-ink-200">{STAGE_LABELS_AR[l.stage]}</td>
-                  <td className="px-4 py-3 text-ink-200">{CLIENT_TYPE_LABELS_AR[l.clientType]}</td>
-                  <td className="px-4 py-3 text-ink-200">{l.assignedRepName ?? '—'}</td>
+                  <td className="px-4 py-3 text-ink-300">{SOURCE_LABELS_AR[l.source]}</td>
+                  <td className="px-4 py-3 text-ink-300">{BUDGET_LABELS_AR[l.budget]}</td>
+                  <td className="px-4 py-3 text-ink-300">{STAGE_LABELS_AR[l.stage]}</td>
+                  <td className="px-4 py-3 text-ink-300">{CLIENT_TYPE_LABELS_AR[l.clientType]}</td>
+                  <td className="px-4 py-3 text-ink-300">{l.assignedRepName ?? '—'}</td>
                 </tr>
               );
             })}
             {leads.length === 0 && (
               <tr>
-                <td colSpan={colCount} className="text-center text-ink-300 py-10">
+                <td colSpan={colCount} className="text-center text-ink-500 py-10">
                   لا توجد نتائج
                 </td>
               </tr>
@@ -192,7 +192,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
           'fixed bottom-6 left-6 z-20 inline-flex items-center gap-2 rounded-full px-5 text-sm font-semibold shadow-lg transition-colors ring-focus',
           bulkMode
             ? 'bg-emerald-500 text-ink-900 hover:bg-emerald-400'
-            : 'bg-ink-775 border border-white/25 text-ink-100 hover:bg-ink-700',
+            : 'bg-ink-700 border border-white/10 text-ink-200 hover:bg-ink-600',
         )}
       >
         <Layers className="h-5 w-5" />

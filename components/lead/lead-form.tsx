@@ -149,7 +149,7 @@ export function LeadForm({ team, isManager }: { team: TeamMember[]; isManager: b
 
       <div className="mt-6 pt-5 border-t border-white/10 flex justify-end">
         <button type="submit" disabled={pending}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-6 text-base font-semibold hover:bg-ink-200 disabled:opacity-60 ring-focus">
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md bg-white text-ink-900 px-6 text-base font-semibold hover:bg-ink-100 disabled:opacity-60 ring-focus">
           {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
           حفظ العميل
         </button>

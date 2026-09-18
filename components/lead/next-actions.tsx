@@ -85,8 +85,8 @@ export function NextActionsBlock({
             className={cn(
               'inline-flex items-center gap-2 rounded-md border px-4 text-sm font-medium transition-colors ring-focus',
               open
-                ? 'border-white/30 bg-white/[0.12] text-white'
-                : 'border-emerald-500/40 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25',
+                ? 'border-white/25 bg-white/[0.08] text-white'
+                : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20',
             )}
           >
             <ListTodo className="h-4 w-4" />
@@ -108,7 +108,7 @@ export function NextActionsBlock({
             <button
               type="submit"
               disabled={pending || !text.trim()}
-              className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-200 disabled:opacity-50 disabled:cursor-not-allowed ring-focus"
+              className="inline-flex items-center gap-2 rounded-md bg-white text-ink-900 px-5 text-sm font-semibold hover:bg-ink-100 disabled:opacity-50 disabled:cursor-not-allowed ring-focus"
             >
               {pending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
               حفظ
@@ -121,11 +121,11 @@ export function NextActionsBlock({
         {items.map((item) => (
           <li
             key={item.id}
-            className="flex items-start justify-between gap-3 rounded-md border border-white/[0.18] bg-ink-760 p-3.5"
+            className="flex items-start justify-between gap-3 rounded-md border border-white/[0.06] bg-white/[0.015] p-3.5"
           >
             <div className="min-w-0 flex-1">
               <div className="text-base text-ink-100 whitespace-pre-wrap break-words">{item.text}</div>
-              <div className="mt-1 text-sm text-ink-300 ltr-inline">
+              <div className="mt-1 text-sm text-ink-500 ltr-inline">
                 {new Date(item.createdAt).toLocaleString('en-GB', { hour12: true })}
                 {item.createdByName ? ` · ${item.createdByName}` : ''}
               </div>
@@ -135,7 +135,7 @@ export function NextActionsBlock({
                 type="button"
                 onClick={() => markDone(item)}
                 title="تم — حذف نهائي"
-                className="inline-flex shrink-0 items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/15 px-4 text-sm font-medium text-emerald-200 hover:bg-emerald-500/25 ring-focus"
+                className="inline-flex shrink-0 items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-200 hover:bg-emerald-500/20 ring-focus"
               >
                 <Check className="h-4 w-4" />
                 تم
@@ -144,7 +144,7 @@ export function NextActionsBlock({
           </li>
         ))}
         {items.length === 0 && (
-          <li className="text-base text-ink-300 text-center py-5">لا توجد خطوات تالية</li>
+          <li className="text-base text-ink-500 text-center py-5">لا توجد خطوات تالية</li>
         )}
       </ul>
     </div>
