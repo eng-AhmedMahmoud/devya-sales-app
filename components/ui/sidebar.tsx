@@ -115,7 +115,6 @@ export function Sidebar({ isManager }: { isManager?: boolean } = {}) {
         {!collapsed && (
           <div className="flex flex-col items-start gap-2 min-w-0">
             <DevyaLogo width={96} />
-            <span className="chip">Sales</span>
           </div>
         )}
         <button
