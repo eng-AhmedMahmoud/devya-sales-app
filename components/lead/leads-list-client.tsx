@@ -70,7 +70,7 @@ export function LeadsListClient({ leads, user, team }: Props) {
     setSelected(new Set());
   }, []);
 
-  const repName = user.name ?? 'فريق ديڤيا';
+  const repName = user.name ?? 'فريق ديفيا';
   const colCount = bulkMode ? 10 : 9;
 
   return (

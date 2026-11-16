@@ -37,7 +37,7 @@ export function WhatsAppButton({ phone, clientName, repName, className, iconOnly
   if (!phone) return null;
 
   const e164 = normalizePhone(phone);
-  const template = `مرحباً ${clientName}، معك ${repName} من ديڤيا. بخصوص مشروعكم — هل الوقت مناسب للحديث؟`;
+  const template = `مرحباً ${clientName}، معك ${repName} من ديفيا. بخصوص مشروعكم — هل الوقت مناسب للحديث؟`;
   const href = `https://wa.me/${e164}?text=${encodeURIComponent(template)}`;
 
   return (
