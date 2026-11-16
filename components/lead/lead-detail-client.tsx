@@ -77,7 +77,7 @@ export function LeadDetailClient({
   const [actNote, setActNote] = useState('');
   const [actOutcome, setActOutcome] = useState('');
 
-  const repName = user.name ?? 'فريق ديڤيا';
+  const repName = user.name ?? 'فريق ديفيا';
 
   async function logActivity(e: React.FormEvent) {
     e.preventDefault();
